@@ -2,18 +2,20 @@
 #define CELL_H
 
 #include <cstddef>
+#include <memory>
 #include "subject.h"
 #include "observer.h"
 #include "state.h"
 #include "info.h"
+#include "block.h"
 
 class Cell :  public Subject<Info, State>, public Observer<Info, State>{
-  //std::shared_pointer block = std::shared_pointer...
+  std::shared_ptr<Block> block = nullptr;
 
   public:
-  void notify(Subject<Info, State> &whoFrom) override;
-  Info getInfo() override;
-  LevelType deleteCell();
+  void notify(std::shared_ptr<Subject<Info, State>> whoFrom) override;
+  Info getInfo() const override;
+  LevelType deleteCell() const;
 };
 
 #endif
