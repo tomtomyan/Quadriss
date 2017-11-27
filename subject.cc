@@ -5,7 +5,7 @@ template <typename InfoType, typename StateType>
 void Subject<InfoType, StateType>::attach(Observer<InfoType, StateType> *o){
   observers.emplace_back(o);
 }
-hi
+
 template <typename InfoType, typename StateType>
 void Subject<InfoType, StateType>::notifyObservers(){
   for (auto &ob : observers) ob->notify(*this);
