@@ -12,7 +12,7 @@ void Grid::placeLowest() {
 
 }
 
-bool Grid::checkValid(std::vector<Pair<int, int>> coordinates) {
+bool Grid::checkValid(std::vector<pair<int, int>> coordinates) {
 
 }
 

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <vector>
+#include <utility>
 
 #include "block.h"
 #include "textdisplay.h"
@@ -13,11 +14,11 @@ class Grid {
   std::unique_ptr<Block> currentBlock;
   std::unique_ptr<Block> nextBlock;
   std::vector<Observer> ob;
-  Pair<int, int> currentLeftBottom;
+  pair<int, int> currentLeftBottom;
   
   void checkRows();
   void placeLowest();
-  bool checkValid(std::vector<Pair<int, int>> coordinates);
+  bool checkValid(std::vector<pair<int, int>> coordinates);
 
   public:
   ~Grid();
