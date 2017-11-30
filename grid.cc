@@ -127,11 +127,27 @@ void Grid::drop() {
 }
 
 void Grid::levelUp() {
-  if (
+  if (theLevel.level == LevelType::None) {
+    theLevel = std::make_unique<Level1>();
+  } else if (theLevel.level == LevelType::Level1) {
+    theLevel = std::make_unique<Level2>();
+  } else if (theLevel.level == LevelType::Level2) {
+    theLevel = std::make_unique<Level3>();
+  } else if (theLevel.level == LevelType::Level3) {
+    theLevel = std::make_unique<Level4>();
+  }
 }
 
 void Grid::levelDown() {
-  if (
+  if (theLevel.level == LevelType::Level4) {
+    theLevel = Level3();
+  } else if (theLevel.level == LevelType::Level3) {
+    theLevel = Level2();
+  } else if (theLevel.level == LevelType::Level2) {
+    theLevel = Level1();
+  } else if (theLevel.level == LevelType::Level1) {
+    theLevel = Level0();
+  }
 }
 
 void Grid::random(bool isRandom, string fileName = string.empty) {
