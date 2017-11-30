@@ -45,8 +45,14 @@ bool Grid::checkValid(std::vector<std::pair<int, int>> coordinates) {
 }
 
 void Grid::addScore(LevelType level, int numCells) {
-  if (level = LevelType::level1) {
-
+  if (level == LevelType::Level1) {
+    score += 
+  } else if (level == LevelType::Level2) {
+    score += 
+  } else if (level == LevelType::Level3) {
+    score +=
+  } else if (level == LevelType::Level4) {
+    score +=
   }
 
   if (score > highScore) highScore = score;
@@ -81,15 +87,29 @@ void Grid::down() {
 
 void Grid::clockwise() {
   std::vector<std::pair<int, int>> c = currentBlock->rotate(true, currentLeftBottom);
+  std::vector<std::pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
   if (checkValid(c)) {
     //rotate the block clockwise
+    for (int i = 0; i < o.size(); i++) {
+      notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
+    }
+    for (int i = 0; i < c.size(); i++) {
+      notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
+    }
   }
 }
 
 void Grid::counterClockwise() {
   std::vector<std::pair<int, int>> c = currentBlock->rotate(false, currentLeftBottom);
+  std::vector<std::pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
   if (checkValid(c)) {
     //rotate the block counterclockwise
+    for (int i = 0; i < o.size(); i++) {
+      notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
+    }
+    for (int i = 0; i < c.size(); i++) {
+      notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
+    }
   }
 }
 
@@ -111,29 +131,43 @@ void Grid::levelUp() {
 }
 
 void Grid::levelDown() {
-
+  if (
 }
 
-void Grid::random(bool isRandom, string fileName = string.empty) {}
+void Grid::random(bool isRandom, string fileName = string.empty) {
+  
+}
 
 void Grid::setBlock(BlockType type) {
-
+  
 }
 
 void Grid::init(LevelType level, bool isRandom = true, string fileName = string.empty) {
+  theGrid.clear();
+  
+  theGrid.resize(15);
+  for (int i = 0; i < 15; i++) {
+    for (int j = 0; i < 11; j++) {
+      theGrid[i].emplace_back(Cell(i, j));
+    }
+  }
 
 }
 
 void Grid::hint() {
-
+  for (int i = 0;
 }
 
 void Grid::attachObserver(Observer ob) {
-
+  ob.emplace_back(ob);
 }
 
 void Grid::detachObserver(Observer ob) {
-
+  for (auto it = observers.begin(); it != observers.end(); ++it) {
+    if (*it == *o) {
+      observers.erase(it);
+    }
+  }
 }
 
 std::ostream &operator<<(std::ostream &out, const Grid &g) {
