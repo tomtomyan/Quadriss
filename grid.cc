@@ -45,8 +45,10 @@ bool Grid::checkValid(std::vector<pair<int, int>> coordinates) {
   return true;
 }
 
-void Grid::addScore(Leveltype level, int numCells) {
-  score += 
+void Grid::addScore(LevelType level, int numCells) {
+  if (level = LevelType::level1) {
+
+  }
 
   if (score > highScore) highScore = score;
 }
@@ -106,7 +108,7 @@ void Grid::drop() {
 }
 
 void Grid::levelUp() {
-
+  if (
 }
 
 void Grid::levelDown() {
