@@ -7,9 +7,10 @@ class Level {
 	bool isHeavy;
 	bool isRandom;
 	string fileName;
-	ifstream &fileStream; // NEW
+	ifstream &fileStream; // NEW - cannot be ifstream fileStream (can't copy ifstreams)
 	
 	public:
+	Level(LevelType, bool, bool);
 	LevelType getLevel();
 	bool getIsHeavy();
 	virtual void setIsRandom(bool) = 0;
