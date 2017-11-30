@@ -6,7 +6,6 @@ Grid::~Grid() {
 
 void Grid::checkRows() {
   std::vector<std::pair<int, int>> c = currentBlock->getCoordinates(currentLeftBottom);
-  vector<int> rows;
   for (int i = 0; i < c.size(); i++) {
     bool clear = true;
     for(int x = 0; x < theGrid.size(); x++) {
@@ -38,7 +37,7 @@ void Grid::placeLowest() {
   //attach new cells
 }
 
-bool Grid::checkValid(std::vector<pair<int, int>> coordinates) {
+bool Grid::checkValid(std::vector<std::pair<int, int>> coordinates) {
   for (int i = 0; coordinates.size(); i++) {
     if (theGrid[coordinates[i].first][coordinates[i].second]) return false;
   }
@@ -138,5 +137,38 @@ void Grid::detachObserver(Observer ob) {
 }
 
 std::ostream &operator<<(std::ostream &out, const Grid &g) {
-
+  out << "Level:      " << level << endl;
+  out << "Score:      " << score << endl;
+  out << "Hi Score: " << highScore << endl;
+  out << "-----------" << endl;
+  for (int i = 0; i < 15; i++) {
+    for (int j = 0; j < 11; j++) {
+      if (theGrid[i][j].block) {
+        if (theGrid[i][j].getInfo().type == BlockType::IBlock) {
+          out << "I";
+        } else if (theGrid[i][j].getInfo().type == BlockType::JBlock) {
+          out << "J";
+        } else if (theGrid[i][j].getInfo().type == BlockType::LBlock) {
+          out << "L";
+        } else if (theGrid[i][j].getInfo().type == BlockType::OBlock) {
+          out << "O";
+        } else if (theGrid[i][j].getInfo().type == BlockType::SBlock) {
+          out << "S";
+        } else if (theGrid[i][j].getInfo().type == BlockType::ZBlock) {
+          out << "Z";
+        } else if (theGrid[i][j].getInfo().type == BlockType::TBlock) {
+          out << "T";
+        } else if (theGrid[i][j].getInfo().type == BlockType::OneCell) {
+          out << "o";
+        }
+      } else {
+        out << " ";
+      }
+    }
+    out << endl;
+  }
+  out << "-----------" << endl;
+  out << "Next:" << endl;
+  //print next block
+  //if (nextBlock.getInfo().type == BlockType::J
 }

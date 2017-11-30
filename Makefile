@@ -1,7 +1,7 @@
 CXX = g++
-CXXFLAGS = -std=c++14 -Wall -Werror -MMD
+CXXFLAGS = -std=c++14 -Wall -Werror=vla -MMD
 EXEC = quadris
-OBJECTS = main.o grid.o cell.o block.o textdisplay.o
+OBJECTS = main.o grid.o cell.o block.o 
 DEPENDS = ${OBJECTS:.o=.d}
 
 ${EXEC}: ${OBJECTS}

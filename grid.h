@@ -6,6 +6,7 @@
 #include <utility>
 
 #include "block.h"
+#include "cell.h"
 //#include "textdisplay.h"
 
 class Grid {
