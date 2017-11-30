@@ -4,8 +4,8 @@
 class Level0 : public Level {
 	public:
 	void setIsRandom(bool) override;
-	Block *generateBlock() override;
-	Block *obstacle(Pair<int,int> &) override;
+	shared_ptr<Block>generateBlock() override;
+	shared_ptr<Block>obstacle(Pair<int,int> &) override;
 };
 
 #endif

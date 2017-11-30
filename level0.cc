@@ -3,37 +3,36 @@
 
 
 // Block constructor
-// Block(BlockType type, LevelType level, DisplayFormat format)
+// Block(LevelType level, DisplayFormat format)
 shared_ptr<Block> Level0::generateBlock() {
 	string input;
 	BlockType blockType;
 	if (getFileStream() >> input) {
 		if (input == "I") {
-			blockType = BlockType::IBlock;
+			return make_shared<IBlock>(LevelType::Level0, DisplayFormat::Standard);
 		}
 		else if (input == "J") {
-                        blockType = BlockType::JBlock;
+                        return make_shared<JBlock>(LevelType::Level0, DisplayFormat::Standard);
 		}
 		else if (input == "L") {
-                        blockType = BlockType::LBlock;
+                        return make_shared<LBlock>(LevelType::Level0, DisplayFormat::Standard);
 		}
 		else if (input == "O") {
-                        blockType = BlockType::OBlock;
+                        return make_shared<OBlock>(LevelType::Level0, DisplayFormat::Standard);
 		}
 		else if (input == "S") {
-                        blockType = BlockType::SBlock;
+                        return make_shared<SBlock>(LevelType::Level0, DisplayFormat::Standard);
 		}
 		else if (input == "Z") {
-                        blockType = BlockType::ZBlock;
+                        return make_shared<ZBlock>(LevelType::Level0, DisplayFormat::Standard);
 		}
 		else if (input == "T") {
-                        blockType = BlockType::TBlock;
+                        return make_shared<TBlock>(LevelType::Level0, DisplayFormat::Standard);
 		}
 		else {
 			//////// throw exception for invalid input?????
 		}
 	}
-        return make_shared<Block>(LevelType::Level0, DisplayFormat::Standard);
 // no Current enumeration
 }
 

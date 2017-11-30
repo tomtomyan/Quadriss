@@ -18,8 +18,8 @@ class Level {
 	string getFileName();
 	virtual void setFileStream(ifstream &) = 0; // NEW
 	ifstream &getFileStream();  // NEW
-	Block *generateBlock() = 0;
-	Block *obstacle(Pair<int,int> &) = 0;
+	shared_ptr<Block>generateBlock() = 0;
+	shared_ptr<Block>obstacle(Pair<int,int> &) = 0;
 };
 
 #endif
