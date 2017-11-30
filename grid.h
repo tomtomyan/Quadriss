@@ -6,7 +6,7 @@
 #include <utility>
 
 #include "block.h"
-#include "textdisplay.h"
+//#include "textdisplay.h"
 
 class Grid {
   std::vector<std::vector<Cell>> theGrid;
@@ -14,16 +14,19 @@ class Grid {
   std::unique_ptr<Block> currentBlock;
   std::unique_ptr<Block> nextBlock;
   std::vector<Observer> ob;
-  pair<int, int> currentLeftBottom;
+  std::pair<int, int> currentLeftBottom;
+
+  int score;
+  int highScore;
   
   void checkRows();
   void placeLowest();
-  bool checkValid(std::vector<pair<int, int>> coordinates);
+  bool checkValid(std::vector<std::pair<int, int>> coordinates);
 
   public:
   ~Grid();
 
-  void addScore();
+  void addScore(LevelType level, int numCells);
   void left();
   void right();
   void down();
