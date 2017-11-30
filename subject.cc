@@ -6,7 +6,7 @@ void Subject<InfoType, StateType>::attach(std::shared_ptr<Observer<InfoType, Sta
 }
 
 template <typename InfoType, typename StateType>
-void Subject<InfoType, StateType::detach(std::shared_ptr<Observer<InfoType, StateType>> o){
+void Subject<InfoType, StateType>::detach(std::shared_ptr<Observer<InfoType, StateType>> o){
   for(auto it = observers.begin(); it != observers.endl; ++it){
     if(*it == *o){
       observers.erase(it);
