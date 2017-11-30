@@ -1,7 +1,17 @@
 #include "level1.h"
 
-void setIsRandom(bool) override;
-void setFileName(string) override;
+
+Level1::Level1():
+        Level{LevelType::Level1, false, true} {}
+
+
+void setIsRandom(bool) {}
+
+
+void setFileName(string fileName) {}
+
+
+void setFileStream(ifstream &fileStream) {}
 
 
 // generate a random number between 1 and 84 inclusive
@@ -17,27 +27,29 @@ shared_ptr<Block> generateBlock() {
 	BlockType blockType;
 	int randNum = rand() % 100 + 1 - 16;
 	if ((1 <= randNum) && (randNum <= 7)) {
-		blockType = BlockType::SBlock;
+		return make_shared<SBlock>(LevelType::Level1, DisplayFormat::Standard);
 	}
 	else if ((8 <= randNum) && (randNum <= 14)) {
-		blockType = BlockType::ZBlock;
+		return make_shared<ZBlock>(LevelType::Level1, DisplayFormat::Standard);
 	}
 	else if ((15 <= randNum) && (randNum <= 28)) {
-		blockType = BlockType::IBlock;
+		return make_shared<IBlock>(LevelType::Level1, DisplayFormat::Standard);
 	}
 	else if ((29 <= randNum) && (randNum <= 42)) {
-		blockType = BlockType::JBlock;
+		return make_shared<JBlock>(LevelType::Level1, DisplayFormat::Standard);
 	}
 	else if ((43 <= randNum) && (randNum <= 56)) {
-		blockType = BlockType::LBlock;
+		return make_shared<LBlock>(LevelType::Level1, DisplayFormat::Standard);
 	}
 	else if ((57 <= randNum) && (randNum <= 70)) {
-		blockType = BlockType::OBlock;
+		return make_shared<OBlock>(LevelType::Level1, DisplayFormat::Standard);
 	}
 	else {
-		blockType = BlockType::TBlock;
+		return make_shared<TBlock>(LevelType::Level1, DisplayFormat::Standard);
 	}
-	return make_shared<Block>(blockType, LevelType::Level1, DisplayFormat::Standard);
 }
 
-shared_ptr<Block> obstacle(pair<int,int> &) override;
+
+shared_ptr<Block> obstacle(pair<int,int> &) {
+	return nullptr;
+}

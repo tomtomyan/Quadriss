@@ -2,6 +2,23 @@
 #include <fstream>
 
 
+Level0::Level0():
+	Level{LevelType::Level0, false, true} {}
+
+
+void setIsRandom(bool isRandom) {}
+
+
+void setFileName(string fileName) {
+	this->fileName = filename;
+}
+
+
+void setFileStream(ifstream &fileStream) {
+	this->fileStream = fileStream;
+}
+
+
 // Block constructor
 // Block(LevelType level, DisplayFormat format)
 shared_ptr<Block> Level0::generateBlock() {
@@ -36,3 +53,7 @@ shared_ptr<Block> Level0::generateBlock() {
 // no Current enumeration
 }
 
+
+shared_ptr<Block>obstacle(Pair<int,int> &) {
+	return nullptr;
+}

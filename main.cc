@@ -11,8 +11,13 @@ int main(int argc, char *argv[]) {
 
   shared_ptr<Level> curLevel = nullptr;
   string startLevel = argv[__]; /////insert index of startlevel cmd arg
+  string fileName = "sequence.txt";
+  ifstream fileStream{};
   if (startLevel == "0") {
+    //fileStream{fileName};
     curLevel = make_shared<Level0>();
+    curLevel->setFileName("sequence.txt");
+    curLevel->setFileStream(fileStream);
   }
   else if (startLevel == "1") {
     curLevel = make_shared<Level1>();
@@ -53,7 +58,14 @@ int main(int argc, char *argv[]) {
       } else if (cmd == "leveldown") {
 
       } else if (cmd == "norandom") {
-
+          curLevel->setIsRandom(false);
+          string fileName;
+          if (cin >> fileName) {
+            ifstream fileStream{fileName};
+            curLevel->setFileName(fileName);
+            curLevel->setFileStream(fileStream); // can't do - set fileStream in MIL, can't change fileStream field
+// create copy ctor for Level 3/4, pass in new fileStream???
+          }
       } else if (cmd == "random") {
 
       } else if (cmd == "sequence") {
