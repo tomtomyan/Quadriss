@@ -6,6 +6,9 @@
 #include "sblock.h"
 #include "zblock.h"
 #include "tblock.h"
+#include "invalidfileexcept.h"
+#include "invalidshapeexcept.h"
+#include <iostream>
 using namespace std;
 
 
@@ -13,7 +16,11 @@ Level0::Level0(ifstream &fileStream):
 	Level{LevelType::Level0, false, true}, fileStream{fileStream} {}
 
 
-void Level0::setIsRandom(bool isRandom) {}
+void Level0::setIsRandom(bool isRandom) {
+	if ((isRandom == false) && !(getFileStream().is_open())) {
+		throw InvalidFile{};
+	}
+}
 
 
 void Level0::setFileName(string fileName) {
@@ -31,7 +38,11 @@ void setFileStream(ifstream &fileStream) {
 // Block(LevelType level, DisplayFormat format)
 shared_ptr<Block> Level0::generateBlock() {
 	string input;
-	BlockType blockType;
+	/*
+	if (!(getFileStream().is_open())) {
+		throw InvalidFile{};
+	}
+	*/
 	if (getFileStream() >> input) {
 		if (input == "I") {
 			return make_shared<IBlock>(LevelType::Level0, DisplayFormat::Standard);
@@ -55,7 +66,7 @@ shared_ptr<Block> Level0::generateBlock() {
                         return make_shared<TBlock>(LevelType::Level0, DisplayFormat::Standard);
 		}
 		else {
-			//////// throw exception for invalid input?????
+			throw InvalidShape{};
 		}
 	}
 // no Current enumeration
