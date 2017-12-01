@@ -17,10 +17,13 @@ class Block : public Subject<Info, State>{
   int cellsLeft;
   int rotationState;
 
-  std::vector<std::pair<int, int>> baseGetCoordinates(int roState, std::pair<int, int> leftBottom) const;
+  virtual std::vector<std::pair<int, int>> baseGetCoordinates(int roState, std::pair<int, int> leftBottom) const = 0;
 
   public:
   Block(BlockType type, LevelType level, DisplayFormat format);
+  virtual ~Block() = 0;
+  int getCellsLeft() const;
+  int getRotationState() const;
   Info getInfo() const;
   std::vector<std::pair<int, int>> getRotated(bool clockwise, std::pair<int, int> leftBottom) const;
   void rotate(bool clockwise);

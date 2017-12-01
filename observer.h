@@ -1,6 +1,8 @@
 #ifndef OBSERVER_H
 #define OBSERVER_H
 
+#include <memory>
+//#include "subject.h"
 template <typename InfoType, typename StateType> class Subject;
 
 template <typename InfoType, typename StateType> class Observer{
