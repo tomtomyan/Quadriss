@@ -36,6 +36,7 @@ int main(int argc, char *argv[]) {
 // handle if file does not exist case in Level and Grid
 istringstream iss{cmd};
 
+while (
 
 
 // if it's not any of the recognized cmds, then it is a file
