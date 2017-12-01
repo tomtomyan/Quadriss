@@ -6,6 +6,8 @@
 #include "sblock.h"
 #include "zblock.h"
 #include "tblock.h"
+#include "invalidfileexcept.h"
+#include "invalidshapeexcept.h"
 using namespace std;
 
 
@@ -14,6 +16,9 @@ Level4::Level4(ifstream &fileStream):
 
 
 void Level4::setIsRandom(bool isRandom) {
+        if ((isRandom == false) && !(getFileStream().is_open())) {
+                throw InvalidFile{};
+        }
 	this->isRandom = isRandom;
 }
 
@@ -29,6 +34,11 @@ void setFileStream(ifstream &fileStream) {
 */
 
 shared_ptr<Block> Level4::generateBlock() {
+	/*
+	if (!(getFileStream().is_open())) {
+		throw InvalidFile{};
+	}
+	*/
         if (getIsRandom() == false) {
                 string input;  // input is type of Blocks
                 if (getFileStream() >> input) {
@@ -54,7 +64,7 @@ shared_ptr<Block> Level4::generateBlock() {
                                 return make_shared<TBlock>(LevelType::Level3,                                                                                 DisplayFormat::Standard);
                         }
                         else {
-                        //////// throw exception for invalid input?????
+                        	throw InvalidShape{};
                         }
                 }
         }
