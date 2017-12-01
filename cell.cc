@@ -2,8 +2,6 @@
 using namespace std;
 
 void Cell::notify(shared_ptr<Subject<Info, State>> whoFrom){
-  cout << "cell notify"<<endl;
-//  cout << this << endl;
   State wfState = whoFrom->getState();
   if(wfState.message == Message::Attach){
     block = dynamic_pointer_cast<Block>(whoFrom);
@@ -17,14 +15,10 @@ void Cell::notify(shared_ptr<Subject<Info, State>> whoFrom){
     setState(wfState);
     notifyObservers();
   }
-  if(block){
-    cout << block << endl;
-  }
 }
 
 Info Cell::getInfo() const{
   if(block){
-//    cout << "got info" << endl;
     return block->getInfo();
   }
   return Info{LevelType::None, BlockType::None, DisplayFormat::Standard};
@@ -37,7 +31,6 @@ LevelType Cell::deleteCell(pair<int, int> coords){
     setState(s);
     notifyObservers();
     lt = block->cellDeleted();
-    //maybe delete current here? or not... hmmmm
     block = nullptr;
   }
   return lt; // there's something wrong if cell gets deleted with no block in it...

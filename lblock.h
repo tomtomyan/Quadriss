@@ -1,15 +1,15 @@
-#ifndef JBLOCK_H
-#define JBLOCK_H
+#ifndef LBLOCK_H
+#define LBLOCK_H
 
 #include "block.h"
 
-class JBlock : public Block, public std::enable_shared_from_this<JBlock>{
+class LBlock : public Block, public std::enable_shared_from_this<LBlock>{
   std::vector<std::pair<int, int>> baseGetCoordinates(int rotState, std::pair<int, int> leftBottom) const override;
   std::shared_ptr<Block> getThisPtr() override;
 
   public:
-  JBlock(LevelType level, DisplayFormat format);
-  virtual ~JBlock();
+  LBlock(LevelType level, DisplayFormat format);
+  virtual ~LBlock();
 };
 
 #endif
