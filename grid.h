@@ -25,9 +25,13 @@ class Grid {
   std::vector<std::shared_ptr<Observer<Info, State>>> ob;
   std::pair<int, int> currentLeftBottom;
 
+  const int width = 11;
+  const int height = 15;
+
   int score;
   int highScore;
   
+  void setLevel();
   void checkRows();
   void placeLowest();
   bool checkValid(std::vector<std::pair<int, int>> coordinates);
