@@ -15,6 +15,7 @@ std::ostream &operator<<(std::ostream &out, const BlockType &bt){
 
 std::ostream &operator<<(std::ostream &out, const LevelType &lt){
   if(lt == LevelType::None) out << "None";
+  else if(lt == LevelType::Level0) out << "Level 0";
   else if(lt == LevelType::Level1) out << "Level 1";
   else if(lt == LevelType::Level2) out << "Level 2";
   else if(lt == LevelType::Level3) out << "Level 3";

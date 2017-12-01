@@ -4,7 +4,7 @@
 #include <iostream>
 
 enum class DisplayFormat {Standard, Hint, Obstacle, Current};
-enum class LevelType {None, Level1, Level2, Level3 , Level4};
+enum class LevelType {None, Level0, Level1, Level2, Level3 , Level4};
 enum class BlockType {None, IBlock, JBlock, LBlock, OBlock, SBlock, ZBlock, TBlock, OneCell};
 
 struct Info{
