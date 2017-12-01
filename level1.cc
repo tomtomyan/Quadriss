@@ -1,17 +1,18 @@
 #include "level1.h"
+using namespace std;
 
 
 Level1::Level1():
         Level{LevelType::Level1, false, true} {}
 
 
-void setIsRandom(bool) {}
+void Level1::setIsRandom(bool) {}
 
 
-void setFileName(string fileName) {}
+void Level1::setFileName(string fileName) {}
 
 
-void setFileStream(ifstream &fileStream) {}
+//void setFileStream(ifstream &fileStream) {}
 
 
 // generate a random number between 1 and 84 inclusive
@@ -23,9 +24,9 @@ void setFileStream(ifstream &fileStream) {}
 // 43-56: L
 // 57-70: O
 // 71-84: T
-shared_ptr<Block> generateBlock() {
+shared_ptr<Block> Level1::generateBlock() {
 	BlockType blockType;
-	int randNum = rand() % 100 + 1 - 16;
+	int randNum = rand() % 84 + 1;
 	if ((1 <= randNum) && (randNum <= 7)) {
 		return make_shared<SBlock>(LevelType::Level1, DisplayFormat::Standard);
 	}
@@ -50,6 +51,6 @@ shared_ptr<Block> generateBlock() {
 }
 
 
-shared_ptr<Block> obstacle(pair<int,int> &) {
+shared_ptr<Block> Level1::obstacle(pair<int,int> &) {
 	return nullptr;
 }

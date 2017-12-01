@@ -2,26 +2,26 @@
 using namespace std;
 
 
-Level4::Level4():
-        Level{LevelType::Level4, true, true} {}
+Level4::Level4(ifstream &fileStream):
+        Level{LevelType::Level4, true, true}, fileStream{fileStream} {}
 
 
-void setIsRandom(bool isRandom) {
+void Lebel4::setIsRandom(bool isRandom) {
 	this->isRandom = isRandom;
 }
 
 
-void setFileName(string fileName) {
+void Level4::setFileName(string fileName) {
 	this->fileName = fileName;
 }
 
-
+/*
 void setFileStream(ifstream &fileStream) {
 	this->fileStream = fileStream;
 }
+*/
 
-
-shared_ptr<Block> generateBlock() {
+shared_ptr<Block> Level4::generateBlock() {
         if (getIsRandom() == false) {
                 string input;  // input is type of Blocks
                 if (getFileStream() >> input) {
@@ -53,7 +53,7 @@ shared_ptr<Block> generateBlock() {
         }
         else {
         BlockType blockType;
-        int randNum = rand() % 100 + 1 - 37;  // 1-81
+        int randNum = rand() % 81 + 1;  // 1-81
         if ((1 <= randNum) && (randNum <= 18)) {
                 return make_shared<SBlock>(LevelType::Level4, DisplayFormat::Standard);
         }
@@ -79,7 +79,7 @@ shared_ptr<Block> generateBlock() {
 }
 
 
-shared_ptr<Block> obstacle(pair<int,int> &leftBottom) {
+shared_ptr<Block> Level4::obstacle(pair<int,int> &leftBottom) {
 	int leftBottomRow = leftBottom.second; // y-value
 	leftBottom = make_pair(5, leftBottomRow);
 	return make_shared<OneCell>(LevelType::OneCell, DisplayFormat::Obstacle);

@@ -1,30 +1,25 @@
 #include "level.h"
-
+using namespace std;
 
 Level::Level(LevelType level, bool isHeavy, bool isRandom):
 	level{level}, isHeavy{isHeavy}, isRandom{isRandom} {}
 
 
-LevelType getLevel() {
+LevelType Level::getLevel() {
 	return level;
 }
 
 
-bool getIsHeavy() {
+bool Level::getIsHeavy() {
 	return isHeavy;
 }
 
 
-bool getIsRandom() {
+bool Level::getIsRandom() {
 	return isRandom;
 }
 
 
-string getFileName() {
+string Level::getFileName() {
 	return fileName;
-}
-
-
-ifstream &getFileStream() {
-	return fileStream;
 }

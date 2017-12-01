@@ -5,18 +5,18 @@ Level2::Level2():
         Level{LevelType::Level2, false, true} {}
 
 
-void setIsRandom(bool isRandom) {}
+void Level2::setIsRandom(bool isRandom) {}
 
 
-void setFileName(string fileName) {}
+void Level2::setFileName(string fileName) {}
 
 
-void setFileStream(ifstream &fileStream) {}
+//void setFileStream(ifstream &fileStream) {}
 
 
-shared_ptr<Block> generateBlock() {
+shared_ptr<Block> Level2::generateBlock() {
         BlockType blockType;
-        int randNum = rand() % 100 + 1 - 93;
+        int randNum = rand() % 7 + 1;
         if (randNum == 1) {
                 return make_shared<SBlock>(LevelType::Level2, DisplayFormat::Standard);
         }
@@ -41,6 +41,6 @@ shared_ptr<Block> generateBlock() {
 }
 
 
-shared_ptr<Block> obstacle(pair<int,int> &) {
+shared_ptr<Block> Level2::obstacle(pair<int,int> &) {
 	return nullptr;
 }
