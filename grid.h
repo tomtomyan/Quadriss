@@ -8,6 +8,11 @@
 #include "block.h"
 #include "cell.h"
 #include "level.h"
+#include "level0.h"
+#include "level1.h"
+#include "level2.h"
+#include "level3.h"
+#include "level4.h"
 #include "observer.h"
 #include "info.h"
 #include "state.h"
@@ -15,11 +20,11 @@
 //#include "textdisplay.h"
 
 class Grid {
-  std::vector<std::vector<Cell>> theGrid;
+  std::vector<std::vector<std::shared_ptr<Cell>>> theGrid;
   std::unique_ptr<Level> theLevel;
-  std::unique_ptr<Block> currentBlock;
-  std::unique_ptr<Block> nextBlock;
-  std::vector<Observer<Info, State>> ob;
+  std::shared_ptr<Block> currentBlock;
+  std::shared_ptr<Block> nextBlock;
+  std::vector<std::shared_ptr<Observer<Info, State>>> ob;
   std::pair<int, int> currentLeftBottom;
 
   int score;
@@ -32,7 +37,7 @@ class Grid {
   public:
   ~Grid();
 
-  void addScore(LevelType level, int numCells);
+  void addScore(bool isLine, LevelType level, int numLines);
   void left();
   void right();
   void down();

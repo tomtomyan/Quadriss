@@ -11,14 +11,15 @@ void Grid::checkRows() {
   for (size_t i = 0; i < c.size(); i++) {
     bool clear = true;
     for(size_t x = 0; x < theGrid.size(); x++) {
-      if (theGrid[x][c[i].second].getInfo().type == BlockType::None) {
+      if (theGrid[x][c[i].second]->getInfo().type == BlockType::None) {
         clear = false;
         break;
       }
     }
     if (clear) {
       for (size_t x = 0; x < theGrid.size(); x++) {
-        theGrid[x][c[i].second].deleteCell();
+        pair<int, int> co (x, c[i].second);
+        theGrid[x][c[i].second]->deleteCell(co);
       }
       //shift everything down
       
@@ -41,21 +42,21 @@ void Grid::placeLowest() {
   vector<pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
   vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
   for (int i = 0; i < o.size(); i++) {
-    notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
+    currentBlock->notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
   }
   for (int i = 0; i < c.size(); i++) {
-    notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
+    currentBlock->notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
   }
 }
 
 bool Grid::checkValid(vector<pair<int, int>> coordinates) {
   for (int i = 0; coordinates.size(); i++) {
-    if (theGrid[coordinates[i].first][coordinates[i].second]) return false;
+    if (theGrid[coordinates[i].first][coordinates[i].second]->getInfo().type != BlockType::None) return false;
   }
   return true;
 }
 
-void Grid::addScore(LevelType level, int numCells) {
+void Grid::addScore(bool isLine, LevelType level, int numLines) {
   if (level == LevelType::Level1) {
     //score += 
   } else if (level == LevelType::Level2) {
@@ -97,29 +98,29 @@ void Grid::down() {
 }
 
 void Grid::clockwise() {
-  vector<pair<int, int>> c = currentBlock->rotate(true, currentLeftBottom);
+  vector<pair<int, int>> c = currentBlock->getRotated(true, currentLeftBottom);
   vector<pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
   if (checkValid(c)) {
     //rotate the block clockwise
     for (int i = 0; i < o.size(); i++) {
-      notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
+      currentBlock->notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
     }
     for (int i = 0; i < c.size(); i++) {
-      notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
+      currentBlock->notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
     }
   }
 }
 
 void Grid::counterClockwise() {
-  vector<pair<int, int>> c = currentBlock->rotate(false, currentLeftBottom);
+  vector<pair<int, int>> c = currentBlock->getRotated(false, currentLeftBottom);
   vector<pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
   if (checkValid(c)) {
     //rotate the block counterclockwise
     for (int i = 0; i < o.size(); i++) {
-      notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
+      currentBlock->notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
     }
     for (int i = 0; i < c.size(); i++) {
-      notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
+      currentBlock->notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
     }
   }
 }
@@ -127,41 +128,41 @@ void Grid::counterClockwise() {
 void Grid::drop() {
   placeLowest();
   checkRows();
-  unique_ptr<Block> o = level.obstacle(currentBlock);
+  shared_ptr<Block> o = theLevel->obstacle(currentLeftBottom);//change this
   if (o) {
-    currentBlock = o;
+    currentBlock = move(o);
     placeLowest();
     checkRows();
   }
-  currentBlock = nextBlock;
-  nextBlock = level.generateBlock();
+  currentBlock = move(nextBlock);
+  nextBlock = move(theLevel->generateBlock());
 }
 
 void Grid::levelUp() {
-  if (theLevel.level == LevelType::None) {
+  if (theLevel->getLevel() == LevelType::None) {
     theLevel = make_unique<Level1>();
-  } else if (theLevel.level == LevelType::Level1) {
+  } else if (theLevel->getLevel() == LevelType::Level1) {
     theLevel = make_unique<Level2>();
-  } else if (theLevel.level == LevelType::Level2) {
+  } else if (theLevel->getLevel() == LevelType::Level2) {
     theLevel = make_unique<Level3>();
-  } else if (theLevel.level == LevelType::Level3) {
+  } else if (theLevel->getLevel() == LevelType::Level3) {
     theLevel = make_unique<Level4>();
   }
 }
 
 void Grid::levelDown() {
-  if (theLevel.level == LevelType::Level4) {
-    theLevel = Level3();
-  } else if (theLevel.level == LevelType::Level3) {
-    theLevel = Level2();
-  } else if (theLevel.level == LevelType::Level2) {
-    theLevel = Level1();
-  } else if (theLevel.level == LevelType::Level1) {
-    theLevel = Level0();
+  if (theLevel->getLevel() == LevelType::Level4) {
+    theLevel = make_unique<Level3>();
+  } else if (theLevel->getLevel() == LevelType::Level3) {
+    theLevel = make_unique<Level2>();
+  } else if (theLevel->getLevel() == LevelType::Level2) {
+    theLevel = make_unique<Level1>();
+  } else if (theLevel->getLevel() == LevelType::Level1) {
+    theLevel = make_unique<Level0>();
   }
 }
 
-void Grid::random(bool isRandom, string fileName = string.empty) {
+void Grid::random(bool isRandom, string fileName) {
   
 }
 
@@ -169,13 +170,14 @@ void Grid::setBlock(BlockType type) {
   
 }
 
-void Grid::init(LevelType level, bool isRandom = true, string fileName = string.empty) {
+void Grid::init(LevelType level, bool isRandom, string fileName) {
   theGrid.clear();
   
   theGrid.resize(15);
   for (int i = 0; i < 15; i++) {
     for (int j = 0; i < 11; j++) {
-      theGrid[i].emplace_back(Cell(i, j));
+      shared_ptr<Cell> c;
+      theGrid[i].emplace_back(c);
     }
   }
 
@@ -190,39 +192,49 @@ void Grid::attachObserver(shared_ptr<Observer<Info, State>> ob) {
 }
 
 void Grid::detachObserver(shared_ptr<Observer<Info, State>> ob) {
-  for (auto it = observers.begin(); it != observers.end(); ++it) {
-    if (*it == *o) {
-      observers.erase(it);
+  for (auto it = this->ob.begin(); it != this->ob.end(); ++it) {
+    if (&(*it) == &ob) {
+      this->ob.erase(it);
     }
   }
 }
 
 std::ostream &operator<<(std::ostream &out, const Grid &g) {
-  out << "Level:      " << g.level << endl;
+  out << "Level:      ";
+  if (g.theLevel->getLevel() == LevelType::Level0) {
+    out << 0;
+  } else if (g.theLevel->getLevel() == LevelType::Level1) {
+    out << 1;
+  } else if (g.theLevel->getLevel() == LevelType::Level2) {
+    out << 2;
+  } else if (g.theLevel->getLevel() == LevelType::Level3) {
+    out << 3;
+  } else if (g.theLevel->getLevel() == LevelType::Level4) {
+    out << 4;
+  }
+  out << endl;
   out << "Score:      " << g.score << endl;
   out << "Hi Score: " << g.highScore << endl;
   out << "-----------" << endl;
   for (int i = 0; i < 15; i++) {
     for (int j = 0; j < 11; j++) {
-      if (theGrid[i][j].block) {
-        if (theGrid[i][j].getInfo().type == BlockType::IBlock) {
-          out << "I";
-        } else if (theGrid[i][j].getInfo().type == BlockType::JBlock) {
-          out << "J";
-        } else if (theGrid[i][j].getInfo().type == BlockType::LBlock) {
-          out << "L";
-        } else if (theGrid[i][j].getInfo().type == BlockType::OBlock) {
-          out << "O";
-        } else if (theGrid[i][j].getInfo().type == BlockType::SBlock) {
-          out << "S";
-        } else if (theGrid[i][j].getInfo().type == BlockType::ZBlock) {
-          out << "Z";
-        } else if (theGrid[i][j].getInfo().type == BlockType::TBlock) {
-          out << "T";
-        } else if (theGrid[i][j].getInfo().type == BlockType::OneCell) {
-          out << "o";
-        }
-      } else {
+      if (g.theGrid[i][j]->getInfo().type == BlockType::IBlock) {
+        out << "I";
+      } else if (g.theGrid[i][j]->getInfo().type == BlockType::JBlock) {
+        out << "J";
+      } else if (g.theGrid[i][j]->getInfo().type == BlockType::LBlock) {
+        out << "L";
+      } else if (g.theGrid[i][j]->getInfo().type == BlockType::OBlock) {
+        out << "O";
+      } else if (g.theGrid[i][j]->getInfo().type == BlockType::SBlock) {
+        out << "S";
+      } else if (g.theGrid[i][j]->getInfo().type == BlockType::ZBlock) {
+        out << "Z";
+      } else if (g.theGrid[i][j]->getInfo().type == BlockType::TBlock) {
+        out << "T";
+      } else if (g.theGrid[i][j]->getInfo().type == BlockType::OneCell) {
+        out << "o";
+      }  else {
         out << " ";
       }
     }
@@ -232,4 +244,5 @@ std::ostream &operator<<(std::ostream &out, const Grid &g) {
   out << "Next:" << endl;
   //print next block
   //if (nextBlock.getInfo().type == BlockType::J
+  return out;
 }
