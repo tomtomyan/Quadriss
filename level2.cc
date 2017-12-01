@@ -23,29 +23,21 @@ void Level2::setFileName(string fileName) {}
 //void setFileStream(ifstream &fileStream) {}
 
 
-shared_ptr<Block> Level2::generateBlock() {
-        int randNum = rand() % 7 + 1;
-        if (randNum == 1) {
-                return make_shared<SBlock>(LevelType::Level2, DisplayFormat::Standard);
-        }
-        else if (randNum == 2) {
-                return make_shared<ZBlock>(LevelType::Level2, DisplayFormat::Standard);
-        }
-        else if (randNum == 3) {
-                return make_shared<IBlock>(LevelType::Level2, DisplayFormat::Standard);
-        }
-        else if (randNum == 4) {
-                return make_shared<JBlock>(LevelType::Level2, DisplayFormat::Standard);
-        }
-        else if (randNum == 5) {
-                return make_shared<LBlock>(LevelType::Level2, DisplayFormat::Standard);
-        }
-        else if (randNum == 6) {
-                return make_shared<OBlock>(LevelType::Level2, DisplayFormat::Standard);
-        }
-        else {
-                return make_shared<TBlock>(LevelType::Level2, DisplayFormat::Standard);
-        }
+shared_ptr<Block> Level2::generateBlock(BlockType type) {
+  if(type == BlockType::None){
+    int randNum = rand() % 7 + 1;
+    if (randNum == 1) type = BlockType::SBlock;
+    else if (randNum == 2) type = BlockType::ZBlock;
+    else if (randNum == 3) type = BlockType::IBlock;
+    else if (randNum == 4) type = BlockType::JBlock;
+    else if (randNum == 5) type = BlockType::LBlock;
+    else if (randNum == 6) type = BlockType::OBlock;
+    else if (randNum == 7) type = BlockType::TBlock;
+    else{
+      //throw something?
+    }
+  }
+  return makeBlock(type, LevelType::Level2);
 }
 
 

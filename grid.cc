@@ -237,11 +237,20 @@ void Grid::levelDown(int n) {
 }
 
 void Grid::random(bool isRandom, string fileName) {
-  
+  theLevel->setIsRandom(isRandom);
+  if(!isRandom) theLevel->setFileName(fileName);
 }
 
 void Grid::setBlock(BlockType type) {
-  
+  vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
+  attachDetach(old, vector<pair<int, int>>());
+  currentBlock = theLevel->generateBlock(type); 
+  vector<pair<int, int>> cur = currentBlock->getCoordinates(currentLeftBottom);
+  if(!checkValid(cur){
+    currentLeftBottom = make_pair(0, 3);
+    cur = currentBlock->getCoordinates(currentLeftBottom);
+  }
+  attachDetach(vector<pair<int, int>>(), cur);
 }
 
 void Grid::init(LevelType level, bool isRandom, string fileName) {

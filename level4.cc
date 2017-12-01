@@ -33,70 +33,37 @@ void setFileStream(ifstream &fileStream) {
 }
 */
 
-shared_ptr<Block> Level4::generateBlock() {
+shared_ptr<Block> Level4::generateBlock(BlockType type) {
 	/*
 	if (!(getFileStream().is_open())) {
 		throw InvalidFile{};
 	}
 	*/
-        if (getIsRandom() == false) {
-                string input;  // input is type of Blocks
-                if (getFileStream() >> input) {
-                        if (input == "I") {
-                                return make_shared<IBlock>(LevelType::Level3,                                                                                 DisplayFormat::Standard);
-                        }
-                        else if (input == "J") {
-                                return make_shared<JBlock>(LevelType::Level3,                                                                                 DisplayFormat::Standard);
-                        }
-                        else if (input == "L") {
-                                return make_shared<LBlock>(LevelType::Level3,                                                                                 DisplayFormat::Standard);
-                        }
-                        else if (input == "O") {
-                                return make_shared<OBlock>(LevelType::Level3,                                                                                 DisplayFormat::Standard);
-                        }
-                        else if (input == "S") {
-                                return make_shared<SBlock>(LevelType::Level3,                                                                                 DisplayFormat::Standard);
-                        }
-                        else if (input == "Z") {
-                                return make_shared<ZBlock>(LevelType::Level3,                                                                                 DisplayFormat::Standard);
-                        }
-                        else if (input == "T") {
-                                return make_shared<TBlock>(LevelType::Level3,                                                                                 DisplayFormat::Standard);
-                        }
-                        else {
-                        	throw InvalidShape{};
-                        }
-                }
-        }
-        else {
-        int randNum = rand() % 81 + 1;  // 1-81
-        if ((1 <= randNum) && (randNum <= 18)) {
-                return make_shared<SBlock>(LevelType::Level4, DisplayFormat::Standard);
-        }
-        else if ((19 <= randNum) && (randNum <= 36)) {
-                return make_shared<ZBlock>(LevelType::Level4, DisplayFormat::Standard);
-        }
-        else if ((37 <= randNum) && (randNum <= 45)) {
-                return make_shared<IBlock>(LevelType::Level4, DisplayFormat::Standard);
-        }
-        else if ((46 <= randNum) && (randNum <= 54)) {
-                return make_shared<JBlock>(LevelType::Level4, DisplayFormat::Standard);
-        }
-        else if ((55 <= randNum) && (randNum <= 63)) {
-                return make_shared<LBlock>(LevelType::Level4, DisplayFormat::Standard);
-        }
-        else if ((64 <= randNum) && (randNum <= 72)) {
-                return make_shared<OBlock>(LevelType::Level4, DisplayFormat::Standard);
-        }
-        else {
-                return make_shared<TBlock>(LevelType::Level4, DisplayFormat::Standard);
-        }
+  if (type == BlockType::None && getIsRandom() == false) {
+    string input;  // input is type of Blocks
+    if (getFileStream() >> input) {
+      type = inputInterpreter(input);
+    }
+  }
+  else if (type == BlockType::None) {
+    int randNum = rand() % 81 + 1;  // 1-81
+    if ((1 <= randNum) && (randNum <= 18)) type = BlockType::SBlock;
+    else if ((19 <= randNum) && (randNum <= 36)) type = BlockType::ZBlock;
+    else if ((37 <= randNum) && (randNum <= 45)) type = BlockType::IBlock;
+    else if ((46 <= randNum) && (randNum <= 54)) type = BlockType::JBlock;
+    else if ((55 <= randNum) && (randNum <= 63)) type = BlockType::LBlock;
+    else if ((64 <= randNum) && (randNum <= 72)) type = BlockType::OBlock;
+    else if ((73 <= randNum) && (randNum <= 81)) type = BlockType::TBlock;
+    else {
+      //throw something???
+    }
 	}
+  return makeBlock(type, LevelType::Level4);
 }
 
 
 shared_ptr<Block> Level4::obstacle(pair<int,int> &leftBottom) {
 	int leftBottomRow = leftBottom.second; // y-value
 	leftBottom = make_pair(5, leftBottomRow);
-	return make_shared<OneCell>(LevelType::OneCell, DisplayFormat::Obstacle);
+	return makeBlock(BlockType::OneCellBlock, LevelType::Level4, DisplayFormat::Obstacle);
 }

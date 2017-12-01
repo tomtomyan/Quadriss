@@ -31,29 +31,21 @@ void Level1::setFileName(string fileName) {}
 // 43-56: L
 // 57-70: O
 // 71-84: T
-shared_ptr<Block> Level1::generateBlock() {
-	int randNum = rand() % 84 + 1;
-	if ((1 <= randNum) && (randNum <= 7)) {
-		return make_shared<SBlock>(LevelType::Level1, DisplayFormat::Standard);
-	}
-	else if ((8 <= randNum) && (randNum <= 14)) {
-		return make_shared<ZBlock>(LevelType::Level1, DisplayFormat::Standard);
-	}
-	else if ((15 <= randNum) && (randNum <= 28)) {
-		return make_shared<IBlock>(LevelType::Level1, DisplayFormat::Standard);
-	}
-	else if ((29 <= randNum) && (randNum <= 42)) {
-		return make_shared<JBlock>(LevelType::Level1, DisplayFormat::Standard);
-	}
-	else if ((43 <= randNum) && (randNum <= 56)) {
-		return make_shared<LBlock>(LevelType::Level1, DisplayFormat::Standard);
-	}
-	else if ((57 <= randNum) && (randNum <= 70)) {
-		return make_shared<OBlock>(LevelType::Level1, DisplayFormat::Standard);
-	}
-	else {
-		return make_shared<TBlock>(LevelType::Level1, DisplayFormat::Standard);
-	}
+shared_ptr<Block> Level1::generateBlock(BlockType type) {
+  if(type == BlockType::None){
+    int randNum = rand() % 84 + 1;
+    if ((1 <= randNum) && (randNum <= 7)) type = BlockType::SBlock;
+    else if ((8 <= randNum) && (randNum <= 14)) type = BlockType::ZBlock;
+    else if ((15 <= randNum) && (randNum <= 28)) type = BlockType::IBlock;
+    else if ((29 <= randNum) && (randNum <= 42)) type = BlockType::JBlock;
+    else if ((43 <= randNum) && (randNum <= 56)) type = BlockType::LBlock;
+  	else if ((57 <= randNum) && (randNum <= 70)) type = BlockType::OBlock;
+  	else if ((71 <= randNum) && (randNum <= 84)) type = BlockType::TBlock;
+    else{
+      //throw something
+    }
+  }
+  return makeBlock(type, LevelType::Level1);
 }
 
 
