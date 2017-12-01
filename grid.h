@@ -7,6 +7,11 @@
 
 #include "block.h"
 #include "cell.h"
+#include "level.h"
+#include "observer.h"
+#include "info.h"
+#include "state.h"
+
 //#include "textdisplay.h"
 
 class Grid {
@@ -14,7 +19,7 @@ class Grid {
   std::unique_ptr<Level> theLevel;
   std::unique_ptr<Block> currentBlock;
   std::unique_ptr<Block> nextBlock;
-  std::vector<Observer> ob;
+  std::vector<Observer<Info, State>> ob;
   std::pair<int, int> currentLeftBottom;
 
   int score;
@@ -36,12 +41,12 @@ class Grid {
   void drop();
   void levelUp();
   void levelDown();
-  void random(bool isRandom, string fileName = string.empty);
+  void random(bool isRandom, std::string fileName = "");
   void setBlock(BlockType type);
-  void init(LevelType level, bool isRandom = true, string fileName = string.empty);
+  void init(LevelType level, bool isRandom = true, std::string fileName = "");
   void hint();
-  void attachObserver(Observer ob);
-  void detachObserver(Observer ob);
+  void attachObserver(std::shared_ptr<Observer<Info, State>> ob);
+  void detachObserver(std::shared_ptr<Observer<Info, State>> ob);
 
   friend std::ostream &operator<<(std::ostream &out, const Grid &g);
 };

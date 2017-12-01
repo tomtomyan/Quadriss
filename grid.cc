@@ -1,43 +1,54 @@
 #include "grid.h"
 
+using namespace std;
+
 Grid::~Grid() {
   theGrid.clear();
 }
 
 void Grid::checkRows() {
-  std::vector<std::pair<int, int>> c = currentBlock->getCoordinates(currentLeftBottom);
-  for (int i = 0; i < c.size(); i++) {
+  vector<pair<int, int>> c = currentBlock->getCoordinates(currentLeftBottom);
+  for (size_t i = 0; i < c.size(); i++) {
     bool clear = true;
-    for(int x = 0; x < theGrid.size(); x++) {
-      if (theGrid[x][c[i].second].block == nullptr) {
+    for(size_t x = 0; x < theGrid.size(); x++) {
+      if (theGrid[x][c[i].second].getInfo().type == BlockType::None) {
         clear = false;
         break;
       }
     }
     if (clear) {
-      for (int x = 0; x < theGrid.size(); x++) {
+      for (size_t x = 0; x < theGrid.size(); x++) {
         theGrid[x][c[i].second].deleteCell();
       }
       //shift everything down
+      
     }
   }
 
 }
 
 void Grid::placeLowest() {
-  std::pair<int, int> newLeftBottom = currentLeftBottom;
+  pair<int, int> newLeftBottom = currentLeftBottom;
   while (true) {
     newLeftBottom.second--;
-    std::vector<std::pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
+    vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
     if (!checkValid(c)) {
-      currentLeftBottom.second = newLeftBottom.second++;
+      newLeftBottom.second++;
       break;
     }
   }
-  //attach new cells
+  //detach old cells and attach new cells
+  vector<pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
+  vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
+  for (int i = 0; i < o.size(); i++) {
+    notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
+  }
+  for (int i = 0; i < c.size(); i++) {
+    notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
+  }
 }
 
-bool Grid::checkValid(std::vector<std::pair<int, int>> coordinates) {
+bool Grid::checkValid(vector<pair<int, int>> coordinates) {
   for (int i = 0; coordinates.size(); i++) {
     if (theGrid[coordinates[i].first][coordinates[i].second]) return false;
   }
@@ -46,48 +57,48 @@ bool Grid::checkValid(std::vector<std::pair<int, int>> coordinates) {
 
 void Grid::addScore(LevelType level, int numCells) {
   if (level == LevelType::Level1) {
-    score += 
+    //score += 
   } else if (level == LevelType::Level2) {
-    score += 
+    //score += 
   } else if (level == LevelType::Level3) {
-    score +=
+    //score +=
   } else if (level == LevelType::Level4) {
-    score +=
+    //score +=
   }
 
   if (score > highScore) highScore = score;
 }
 
 void Grid::left() {
-  std::pair<int, int> newLeftBottom = currentLeftBottom;
+  pair<int, int> newLeftBottom = currentLeftBottom;
   newLeftBottom.first--;
-  std::vector<std::pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
+  vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
   if (checkValid(c)) {
     currentLeftBottom.first--;
   }
 }
 
 void Grid::right() {
-  std::pair<int, int> newLeftBottom = currentLeftBottom;
+  pair<int, int> newLeftBottom = currentLeftBottom;
   newLeftBottom.first++;
-  std::vector<std::pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
+  vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
   if (checkValid(c)) {
     currentLeftBottom.first++;
   }
 }
 
 void Grid::down() {
-  std::pair<int, int> newLeftBottom = currentLeftBottom;
+  pair<int, int> newLeftBottom = currentLeftBottom;
   newLeftBottom.second++;
-  std::pair<int, int> c = currentBlock->getCoordinates(newLeftBottom);
+  vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
   if (checkValid(c)) {
     currentLeftBottom.second++;
   } 
 }
 
 void Grid::clockwise() {
-  std::vector<std::pair<int, int>> c = currentBlock->rotate(true, currentLeftBottom);
-  std::vector<std::pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
+  vector<pair<int, int>> c = currentBlock->rotate(true, currentLeftBottom);
+  vector<pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
   if (checkValid(c)) {
     //rotate the block clockwise
     for (int i = 0; i < o.size(); i++) {
@@ -100,8 +111,8 @@ void Grid::clockwise() {
 }
 
 void Grid::counterClockwise() {
-  std::vector<std::pair<int, int>> c = currentBlock->rotate(false, currentLeftBottom);
-  std::vector<std::pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
+  vector<pair<int, int>> c = currentBlock->rotate(false, currentLeftBottom);
+  vector<pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
   if (checkValid(c)) {
     //rotate the block counterclockwise
     for (int i = 0; i < o.size(); i++) {
@@ -116,7 +127,7 @@ void Grid::counterClockwise() {
 void Grid::drop() {
   placeLowest();
   checkRows();
-  std::unique_ptr<Block> o = level.obstacle(currentBlock);
+  unique_ptr<Block> o = level.obstacle(currentBlock);
   if (o) {
     currentBlock = o;
     placeLowest();
@@ -128,13 +139,13 @@ void Grid::drop() {
 
 void Grid::levelUp() {
   if (theLevel.level == LevelType::None) {
-    theLevel = std::make_unique<Level1>();
+    theLevel = make_unique<Level1>();
   } else if (theLevel.level == LevelType::Level1) {
-    theLevel = std::make_unique<Level2>();
+    theLevel = make_unique<Level2>();
   } else if (theLevel.level == LevelType::Level2) {
-    theLevel = std::make_unique<Level3>();
+    theLevel = make_unique<Level3>();
   } else if (theLevel.level == LevelType::Level3) {
-    theLevel = std::make_unique<Level4>();
+    theLevel = make_unique<Level4>();
   }
 }
 
@@ -171,14 +182,14 @@ void Grid::init(LevelType level, bool isRandom = true, string fileName = string.
 }
 
 void Grid::hint() {
-  for (int i = 0;
+
 }
 
-void Grid::attachObserver(Observer ob) {
-  ob.emplace_back(ob);
+void Grid::attachObserver(shared_ptr<Observer<Info, State>> ob) {
+  this->ob.emplace_back(ob);
 }
 
-void Grid::detachObserver(Observer ob) {
+void Grid::detachObserver(shared_ptr<Observer<Info, State>> ob) {
   for (auto it = observers.begin(); it != observers.end(); ++it) {
     if (*it == *o) {
       observers.erase(it);
@@ -187,9 +198,9 @@ void Grid::detachObserver(Observer ob) {
 }
 
 std::ostream &operator<<(std::ostream &out, const Grid &g) {
-  out << "Level:      " << level << endl;
-  out << "Score:      " << score << endl;
-  out << "Hi Score: " << highScore << endl;
+  out << "Level:      " << g.level << endl;
+  out << "Score:      " << g.score << endl;
+  out << "Hi Score: " << g.highScore << endl;
   out << "-----------" << endl;
   for (int i = 0; i < 15; i++) {
     for (int j = 0; j < 11; j++) {
