@@ -1,4 +1,11 @@
 #include "level4.h"
+#include "iblock.h"
+#include "jblock.h"
+#include "lblock.h"
+#include "oblock.h"
+#include "sblock.h"
+#include "zblock.h"
+#include "tblock.h"
 using namespace std;
 
 
@@ -6,7 +13,7 @@ Level4::Level4(ifstream &fileStream):
         Level{LevelType::Level4, true, true}, fileStream{fileStream} {}
 
 
-void Lebel4::setIsRandom(bool isRandom) {
+void Level4::setIsRandom(bool isRandom) {
 	this->isRandom = isRandom;
 }
 
@@ -52,7 +59,6 @@ shared_ptr<Block> Level4::generateBlock() {
                 }
         }
         else {
-        BlockType blockType;
         int randNum = rand() % 81 + 1;  // 1-81
         if ((1 <= randNum) && (randNum <= 18)) {
                 return make_shared<SBlock>(LevelType::Level4, DisplayFormat::Standard);

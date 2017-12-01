@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include "grid.h"
+#include <sstream>
 
 using namespace std;
 
@@ -9,8 +10,6 @@ int main(int argc, char *argv[]) {
   string cmd;
   Grid grid;
   string startLevel = argv[__]; /////insert index of startlevel cmd arg
-  //string fileName = "sequence.txt";
-  ifstream fileStream{};
   if (startLevel == "0") {
     grid.init(LevelType::Level0, false, "sequence.txt");
   }
@@ -29,12 +28,19 @@ int main(int argc, char *argv[]) {
   else {  // if no startlevel option is supplied, start at Level 0
     grid.init(LevelType::Level0, false, "sequence.txt");
   }
-  while (true) {
-
-  }
   try {
     while (true) {
       cin >> cmd;
+
+// pass in file assuming it is valid
+// handle if file does not exist case in Level and Grid
+istringstream iss{cmd};
+
+
+
+// if it's not any of the recognized cmds, then it is a file
+// END
+
       if (cmd == "left") {
           grid.left();
       } else if (cmd == "right") {
@@ -56,14 +62,14 @@ int main(int argc, char *argv[]) {
           if (cin >> file) {
             ifstream fileStream{file};
 // create copy ctor for Level 3/4, pass in new fileStream???
-            while (
+            grid.random(false, file);
           }
       } else if (cmd == "random") {
 	  
       } else if (cmd == "sequence") {
 	  string file;
 	  if (cin >> file) {
-	    grid.random(
+	    grid.random(false, file);
 	  }
       } else if (cmd == "restart") {
 

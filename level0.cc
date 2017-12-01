@@ -1,5 +1,11 @@
 #include "level0.h"
-#include <fstream>
+#include "iblock.h"
+#include "jblock.h"
+#include "lblock.h"
+#include "oblock.h"
+#include "sblock.h"
+#include "zblock.h"
+#include "tblock.h"
 using namespace std;
 
 
@@ -11,7 +17,7 @@ void Level0::setIsRandom(bool isRandom) {}
 
 
 void Level0::setFileName(string fileName) {
-	this->fileName = filename;
+	this->fileName = fileName;
 }
 
 /*
@@ -56,6 +62,6 @@ shared_ptr<Block> Level0::generateBlock() {
 }
 
 
-shared_ptr<Block> Level0::obstacle(Pair<int,int> &) {
+shared_ptr<Block> Level0::obstacle(pair<int,int> &) {
 	return nullptr;
 }

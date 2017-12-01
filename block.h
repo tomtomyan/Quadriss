@@ -19,6 +19,8 @@ class Block : public Subject<Info, State>{
 
   virtual std::vector<std::pair<int, int>> baseGetCoordinates(int roState, std::pair<int, int> leftBottom) const = 0;
 
+  virtual std::shared_ptr<Block> getThisPtr() = 0;
+
   public:
   Block(BlockType type, LevelType level, DisplayFormat format);
   virtual ~Block() = 0;

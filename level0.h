@@ -2,6 +2,7 @@
 #define LEVEL0_H
 #include <fstream>
 #include <memory>
+#include "level.h"
 class Block;
 
 class Level0 : public Level {
