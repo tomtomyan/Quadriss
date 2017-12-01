@@ -1,4 +1,13 @@
 #include "level2.h"
+#include "info.h"
+#include "iblock.h"
+#include "jblock.h"
+#include "lblock.h"
+#include "oblock.h"
+#include "sblock.h"
+#include "zblock.h"
+#include "tblock.h"
+using namespace std;
 
 
 Level2::Level2():
@@ -15,7 +24,6 @@ void Level2::setFileName(string fileName) {}
 
 
 shared_ptr<Block> Level2::generateBlock() {
-        BlockType blockType;
         int randNum = rand() % 7 + 1;
         if (randNum == 1) {
                 return make_shared<SBlock>(LevelType::Level2, DisplayFormat::Standard);

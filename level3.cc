@@ -1,5 +1,13 @@
 #include "level3.h"
-
+#include "info.h"
+#include "iblock.h"
+#include "jblock.h"
+#include "lblock.h"
+#include "oblock.h"
+#include "sblock.h"
+#include "zblock.h"
+#include "tblock.h"
+using namespace std;
 
 Level3::Level3(ifstream &fileStream):
         Level{LevelType::Level3, true, true}, fileStream{fileStream} {}
