@@ -8,6 +8,8 @@ class Block;
 class Level {
 	LevelType level;
 	bool isHeavy;
+	
+	protected:
 	bool isRandom;
 	std::string fileName;
 	
