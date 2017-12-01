@@ -17,8 +17,6 @@
 #include "info.h"
 #include "state.h"
 
-//#include "textdisplay.h"
-
 class Grid {
   std::vector<std::vector<std::shared_ptr<Cell>>> theGrid;
   std::unique_ptr<Level> theLevel;
@@ -33,19 +31,20 @@ class Grid {
   void checkRows();
   void placeLowest();
   bool checkValid(std::vector<std::pair<int, int>> coordinates);
+  void attachDetach(std::vector<std::pair<int, int>> &o, std::vector<std::pair<int, int>> &c);
 
   public:
   ~Grid();
 
   void addScore(bool isLine, LevelType level, int numLines);
-  void left();
-  void right();
-  void down();
-  void clockwise();
-  void counterClockwise();
-  void drop();
-  void levelUp();
-  void levelDown();
+  void left(int);
+  void right(int);
+  void down(int);
+  void clockwise(int);
+  void counterClockwise(int);
+  void drop(int);
+  void levelUp(int);
+  void levelDown(int);
   void random(bool isRandom, std::string fileName = "");
   void setBlock(BlockType type);
   void init(LevelType level, bool isRandom = true, std::string fileName = "");
