@@ -6,6 +6,15 @@ Grid::~Grid() {
   theGrid.clear();
 }
 
+void Grid::attachDetach(vector<pair<int, int>> &o, vector<pair<int, int>> &c) {
+  for (int i = 0; i < o.size(); i++) {
+    currentBlock->notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
+  }
+  for (int i = 0; i < c.size(); i++) {
+    currentBlock->notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
+  }
+}
+
 void Grid::checkRows() {
   vector<pair<int, int>> c = currentBlock->getCoordinates(currentLeftBottom);
   for (size_t i = 0; i < c.size(); i++) {
@@ -39,14 +48,9 @@ void Grid::placeLowest() {
     }
   }
   //detach old cells and attach new cells
-  vector<pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
-  vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
-  for (int i = 0; i < o.size(); i++) {
-    currentBlock->notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
-  }
-  for (int i = 0; i < c.size(); i++) {
-    currentBlock->notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
-  }
+  vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
+  vector<pair<int, int>> current = currentBlock->getCoordinates(newLeftBottom);
+  attachDetach(old, current);
 }
 
 bool Grid::checkValid(vector<pair<int, int>> coordinates) {
@@ -70,62 +74,59 @@ void Grid::addScore(bool isLine, LevelType level, int numLines) {
   if (score > highScore) highScore = score;
 }
 
-void Grid::left() {
-  pair<int, int> newLeftBottom = currentLeftBottom;
-  newLeftBottom.first--;
-  vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
-  if (checkValid(c)) {
-    currentLeftBottom.first--;
-  }
-}
-
-void Grid::right() {
-  pair<int, int> newLeftBottom = currentLeftBottom;
-  newLeftBottom.first++;
-  vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
-  if (checkValid(c)) {
-    currentLeftBottom.first++;
-  }
-}
-
-void Grid::down() {
-  pair<int, int> newLeftBottom = currentLeftBottom;
-  newLeftBottom.second++;
-  vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
-  if (checkValid(c)) {
-    currentLeftBottom.second++;
-  } 
-}
-
-void Grid::clockwise() {
-  vector<pair<int, int>> c = currentBlock->getRotated(true, currentLeftBottom);
-  vector<pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
-  if (checkValid(c)) {
-    //rotate the block clockwise
-    for (int i = 0; i < o.size(); i++) {
-      currentBlock->notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
-    }
-    for (int i = 0; i < c.size(); i++) {
-      currentBlock->notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
+void Grid::left(int n) {
+  for (int i = 0; i < n; i++) {
+    pair<int, int> newLeftBottom = currentLeftBottom;
+    newLeftBottom.first--;
+    vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
+    vector<pair<int, int>> current = currentBlock->getCoordinates(newLeftBottom);
+    if (checkValid(current)) {
+      attachDetach(old, current);
     }
   }
 }
 
-void Grid::counterClockwise() {
-  vector<pair<int, int>> c = currentBlock->getRotated(false, currentLeftBottom);
-  vector<pair<int, int>> o = currentBlock->getCoordinates(currentLeftBottom);
-  if (checkValid(c)) {
-    //rotate the block counterclockwise
-    for (int i = 0; i < o.size(); i++) {
-      currentBlock->notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
-    }
-    for (int i = 0; i < c.size(); i++) {
-      currentBlock->notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
+void Grid::right(int n) {
+  for (int i = 0; i < n; i++) {
+    pair<int, int> newLeftBottom = currentLeftBottom;
+    newLeftBottom.first++;
+    vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
+    vector<pair<int, int>> current = currentBlock->getCoordinates(newLeftBottom);
+    if (checkValid(current)) {
+      attachDetach(old, current);
     }
   }
 }
 
-void Grid::drop() {
+void Grid::down(int n) {
+  for (int i = 0; i < n; i++) {
+    pair<int, int> newLeftBottom = currentLeftBottom;
+    newLeftBottom.second++;
+    vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
+    vector<pair<int, int>> current = currentBlock->getCoordinates(newLeftBottom);
+    if (checkValid(current)) {
+      attachDetach(old, current);
+    }
+  }
+}
+
+void Grid::clockwise(int n) {
+  vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
+  vector<pair<int, int>> current = currentBlock->getRotated(true, currentLeftBottom);
+  if (checkValid(current)) {
+    attachDetach(old, current);
+  }
+}
+
+void Grid::counterClockwise(int n) {
+  vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
+  vector<pair<int, int>> current = currentBlock->getRotated(false, currentLeftBottom);
+  if (checkValid(current)) {
+    attachDetach(old, current);
+  }
+}
+
+void Grid::drop(int n) {
   placeLowest();
   checkRows();
   shared_ptr<Block> o = theLevel->obstacle(currentLeftBottom);//change this
@@ -138,7 +139,7 @@ void Grid::drop() {
   nextBlock = move(theLevel->generateBlock());
 }
 
-void Grid::levelUp() {
+void Grid::levelUp(int n) {
   if (theLevel->getLevel() == LevelType::None) {
     theLevel = make_unique<Level1>();
   } else if (theLevel->getLevel() == LevelType::Level1) {
@@ -150,7 +151,7 @@ void Grid::levelUp() {
   }
 }
 
-void Grid::levelDown() {
+void Grid::levelDown(int n) {
   if (theLevel->getLevel() == LevelType::Level4) {
     theLevel = make_unique<Level3>();
   } else if (theLevel->getLevel() == LevelType::Level3) {
