@@ -1,23 +1,24 @@
 #include "level3.h"
 
 
-Level3::Level3():
-        Level{LevelType::Level3, true, true} {}
+Level3::Level3(ifstream &fileStream):
+        Level{LevelType::Level3, true, true}, fileStream{fileStream} {}
 
 
-void setIsRandom(bool isRandom) {
+void Level3::setIsRandom(bool isRandom) {
 	this->isRandom = isRandom;
 }
 
 
-void setFileName(string fileName) {
+void Level3::setFileName(string fileName) {
 	this->fileName = fileName;
 }
 
-
+/*
 void setFileStream(ifstream &fileStream) {
 	this->fileStream = fileStream;
 }
+*/
 
 
 // S: 18/81 -> 1-18
@@ -27,7 +28,7 @@ void setFileStream(ifstream &fileStream) {
 // L: " -> 55-63
 // O: " -> 64-72
 // T: " -> 73-81
-shared_ptr<Block> generateBlock() {
+shared_ptr<Block> Level3::generateBlock() {
 	if (getIsRandom() == false) {
 		string input;  // input is type of Blocks
 		if (getFileStream() >> input) {
@@ -59,7 +60,7 @@ shared_ptr<Block> generateBlock() {
 	}
 	else {
 	BlockType blockType;
-	int randNum = rand() % 100 + 1 - 37;  // 1-81
+	int randNum = rand() % 81 + 1;  // 1-81
         if ((1 <= randNum) && (randNum <= 18)) {
                 return make_shared<SBlock>(LevelType::Level4, DisplayFormat::Standard);
         }
@@ -85,7 +86,7 @@ shared_ptr<Block> generateBlock() {
 }
 
 
-shared_ptr<Block> obstacle(pair<int,int> &) {
+shared_ptr<Block> Level3::obstacle(pair<int,int> &) {
 	return nullptr;
 }
 

@@ -1,22 +1,24 @@
 #include "level0.h"
 #include <fstream>
+using namespace std;
 
 
-Level0::Level0():
-	Level{LevelType::Level0, false, true} {}
+Level0::Level0(ifstream &fileStream):
+	Level{LevelType::Level0, false, true}, fileStream{fileStream} {}
 
 
-void setIsRandom(bool isRandom) {}
+void Level0::setIsRandom(bool isRandom) {}
 
 
-void setFileName(string fileName) {
+void Level0::setFileName(string fileName) {
 	this->fileName = filename;
 }
 
-
+/*
 void setFileStream(ifstream &fileStream) {
 	this->fileStream = fileStream;
 }
+*/
 
 
 // Block constructor
@@ -54,6 +56,6 @@ shared_ptr<Block> Level0::generateBlock() {
 }
 
 
-shared_ptr<Block>obstacle(Pair<int,int> &) {
+shared_ptr<Block> Level0::obstacle(Pair<int,int> &) {
 	return nullptr;
 }
