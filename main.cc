@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
-#include "grid.h"
 #include <sstream>
+#include "grid.h"
 
 using namespace std;
 
@@ -32,53 +32,62 @@ int main(int argc, char *argv[]) {
     while (true) {
       cin >> cmd;
 
-// pass in file assuming it is valid
-// handle if file does not exist case in Level and Grid
-istringstream iss{cmd};
+      // pass in file assuming it is valid
+      // handle if file does not exist case in Level and Grid
+      istringstream iss{cmd};
+      
+      int n = 1;
 
-while (
+      iss >> n;
+      iss >> cmd;
 
+      string str[13] = {"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "restart", "hint"};
+      int counter = 0;
+      string newcmd;
+      for (int i = 0; i < 13; i++) {
+        if (str[i].find(cmd) == 0) {
+          counter++;
+          newcmd = str[i]
+        }
+      }
 
-// if it's not any of the recognized cmds, then it is a file
-// END
+      if (counter != 1) continue;
 
-      if (cmd == "left") {
-          grid.left();
-      } else if (cmd == "right") {
-	  grid.right();
-      } else if (cmd == "down") {
-	  grid.down();
-      } else if (cmd == "clockwise") {
-	  grid.clockwise();
+      if (newcmd == "left") {
+        grid.left(n);
+      } else if (cmd.find("ri") == 0) {
+	      grid.right(n);
+      } else if (cmd.find("do") == 0) {
+	      grid.down(n);
+      } else if (cmd.find("cl") == 0) {
+	      grid.clockwise(n);
       } else if (cmd == "counterclockwise") {
-	  grid.counterclockwise();
+	      grid.counterclockwise(n);
       } else if (cmd == "drop") {
-	  grid.drop();
+	      grid.drop(n);
       } else if (cmd == "levelup") {
-	  grid.levelUp();
+	      grid.levelUp(n);
       } else if (cmd == "leveldown") {
-	  grid.levelDown();
+	      grid.levelDown(n);
       } else if (cmd == "norandom") {
-          string file;
-          if (cin >> file) {
-            ifstream fileStream{file};
-// create copy ctor for Level 3/4, pass in new fileStream???
-            grid.random(false, file);
-          }
+        string file;
+        if (cin >> file) {
+          ifstream fileStream{file};
+          // create copy ctor for Level 3/4, pass in new fileStream???
+          grid.random(false, file);
+        }
       } else if (cmd == "random") {
 	  
       } else if (cmd == "sequence") {
-	  string file;
-	  if (cin >> file) {
-	    grid.random(false, file);
-	  }
+	      string file;
+	      if (cin >> file) {
+	        grid.random(false, file);
+	      }
       } else if (cmd == "restart") {
 
       } else if (cmd == "hint") {
 
-      } 
-
-
+      }
     }
   } catch (ios::failure &) {}
 
