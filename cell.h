@@ -9,7 +9,7 @@
 #include "block.h"
 
 class Cell :  public Subject<Info, State>, public Observer<Info, State>{
-  std::shared_ptr<Block> block = nullptr;
+  std::shared_ptr<Block> block; 
 
   public:
   void notify(std::shared_ptr<Subject<Info, State>> whoFrom) override;
