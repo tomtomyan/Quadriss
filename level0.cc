@@ -20,9 +20,11 @@ Level0::Level0(string fileName):
 
 
 void Level0::setIsRandom(bool isRandom) {
+  /*
 	if ((isRandom == false) && !(fileStream.is_open())) {
 		throw InvalidFile{};
 	}
+  */
 	this->isRandom = isRandom;
 }
 
