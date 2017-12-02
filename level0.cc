@@ -11,11 +11,12 @@
 #include "invalidfileexcept.h"
 #include "invalidshapeexcept.h"
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 
-Level0::Level0(ifstream &fileStream):
-	Level{LevelType::Level0, false, true}, fileStream{fileStream} {}
+Level0::Level0(string fileName):
+	Level{LevelType::Level0, false, true}, fileStream{ifstream{fileName}} {}
 
 
 void Level0::setIsRandom(bool isRandom) {
