@@ -1,5 +1,6 @@
 #include "level2.h"
 #include "info.h"
+/*
 #include "iblock.h"
 #include "jblock.h"
 #include "lblock.h"
@@ -7,6 +8,7 @@
 #include "sblock.h"
 #include "zblock.h"
 #include "tblock.h"
+*/
 using namespace std;
 
 

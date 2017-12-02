@@ -1,4 +1,5 @@
 #include "level4.h"
+/*
 #include "iblock.h"
 #include "jblock.h"
 #include "lblock.h"
@@ -6,6 +7,7 @@
 #include "sblock.h"
 #include "zblock.h"
 #include "tblock.h"
+*/
 #include "invalidfileexcept.h"
 #include "invalidshapeexcept.h"
 using namespace std;

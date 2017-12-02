@@ -265,7 +265,8 @@ void Grid::init(LevelType level, bool isRandom, string fileName) {
   }
   
   setLevel(level);
-  theLevel->setRandom(isRandom, fileName);
+  theLevel->setRandom(isRandom);
+  theLevel->setFileName(fileName);
   currentLeftBottom = make_pair(0,3);
   currentBlock = theLevel->generateBlock();
   attachDetach(vector<pair<int, int>>(), currentBlock->getCoordinates(currentLeftBottom));

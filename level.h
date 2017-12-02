@@ -3,6 +3,14 @@
 #include <fstream>
 #include <memory>
 #include "info.h"
+#include "iblock.h"
+#include "jblock.h"
+#include "lblock.h"
+#include "oblock.h"
+#include "sblock.h"
+#include "zblock.h"
+#include "tblock.h"
+#include "oneCellblock.h"
 class Block;
 
 class Level {

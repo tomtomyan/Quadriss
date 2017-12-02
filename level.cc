@@ -1,6 +1,7 @@
 #include "level.h"
 #include "invalidfileexcept.h"
 #include "invalidshapeexcept.h"
+#include <string>
 using namespace std;
 
 Level::Level(LevelType level, bool isHeavy, bool isRandom):
@@ -28,28 +29,28 @@ string Level::getFileName() {
 
 shared_ptr<Block> Level::makeBlock(BlockType type, LevelType level, DisplayFormat format){
   shared_ptr<Block> block = nullptr;
-  if (type == LevelType::IBlock) {
+  if (type == BlockType::IBlock) {
     block = make_shared<IBlock>(level, format);
   }
-  else if (type == LevelType::JBlock) {
+  else if (type == BlockType::JBlock) {
     block = make_shared<JBlock>(level, format);
   }
-  else if (type == LevelType::LBlock) {
+  else if (type == BlockType::LBlock) {
     block = make_shared<LBlock>(level, format);
   }
-  else if (type == LevelType::OBlock) {
+  else if (type == BlockType::OBlock) {
     block = make_shared<OBlock>(level, format);
   }
-  else if (type == LevelType::SBlock) {
+  else if (type == BlockType::SBlock) {
     block = make_shared<SBlock>(level, format);
   }
-  else if (type == LevelType::ZBlock) {
+  else if (type == BlockType::ZBlock) {
     block = make_shared<ZBlock>(level, format);
   }
-  else if (type == LevelType::TBlock) {
+  else if (type == BlockType::TBlock) {
     block = make_shared<TBlock>(level, format);
   }
-  else if (type == LevelType::OneCellBlock) {
+  else if (type == BlockType::OneCellBlock) {
     block = make_shared<OneCellBlock>(level, format);
   }
   //throw exception for an else??

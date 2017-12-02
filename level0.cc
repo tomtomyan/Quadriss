@@ -1,4 +1,5 @@
 #include "level0.h"
+/*
 #include "iblock.h"
 #include "jblock.h"
 #include "lblock.h"
@@ -6,6 +7,7 @@
 #include "sblock.h"
 #include "zblock.h"
 #include "tblock.h"
+*/
 #include "invalidfileexcept.h"
 #include "invalidshapeexcept.h"
 #include <iostream>
@@ -20,6 +22,7 @@ void Level0::setIsRandom(bool isRandom) {
 	if ((isRandom == false) && !(getFileStream().is_open())) {
 		throw InvalidFile{};
 	}
+	this->isRandom = isRandom;
 }
 
 
