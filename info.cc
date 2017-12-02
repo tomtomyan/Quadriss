@@ -9,7 +9,7 @@ std::ostream &operator<<(std::ostream &out, const BlockType &bt){
   else if(bt == BlockType::SBlock) out << "S Block";
   else if(bt == BlockType::ZBlock) out << "Z Block";
   else if(bt == BlockType::TBlock) out << "T Block";
-  else if(bt == BlockType::OneCell) out << "One Cell";
+  else if(bt == BlockType::OneCellBlock) out << "One Cell";
   return out;
 }
 

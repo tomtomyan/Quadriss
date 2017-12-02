@@ -19,7 +19,7 @@ Level3::Level3(string fileName):
 
 
 void Level3::setIsRandom(bool isRandom) {
-        if ((isRandom == false) && !(getFileStream().is_open())) {
+        if ((isRandom == false) && !(fileStream.is_open())) {
                 throw InvalidFile{};
         }
 	this->isRandom = isRandom;
@@ -52,7 +52,7 @@ shared_ptr<Block> Level3::generateBlock(BlockType type) {
 		}
 		*/
 		string input;  // input is type of Blocks
-		if (getFileStream() >> input) {
+		if (fileStream >> input) {
       type = inputInterpreter(input);
 		}
 	}

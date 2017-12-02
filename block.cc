@@ -42,7 +42,7 @@ void Block::rotate(bool clockwise){
 LevelType Block::cellDeleted(){
   cellsLeft--;
   if(cellsLeft <=0 ) return level;
-  return level;
+  return LevelType::None;
 }
 
 vector<pair<int, int>> Block::getCoordinates(pair<int, int> coords) const{

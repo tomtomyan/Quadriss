@@ -19,7 +19,7 @@ Level4::Level4(string fileName):
 
 
 void Level4::setIsRandom(bool isRandom) {
-        if ((isRandom == false) && !(getFileStream().is_open())) {
+        if ((isRandom == false) && !(fileStream.is_open())) {
                 throw InvalidFile{};
         }
 	this->isRandom = isRandom;
@@ -44,7 +44,7 @@ shared_ptr<Block> Level4::generateBlock(BlockType type) {
 	*/
   if (type == BlockType::None && getIsRandom() == false) {
     string input;  // input is type of Blocks
-    if (getFileStream() >> input) {
+    if (fileStream >> input) {
       type = inputInterpreter(input);
     }
   }

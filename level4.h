@@ -8,7 +8,7 @@ class Block;
 class Level4 : public Level {
 	std::ifstream fileStream;
         public:
-	Level4(std::string);
+	Level4(std::string fileName = "");
         void setIsRandom(bool) override;
         void setFileName(std::string) override;
 //	void setFileStream(ifstream &) override;

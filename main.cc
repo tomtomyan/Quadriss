@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
       if (i+1 < argc) startLevel = argv[i+1];
     }
   }
+  cout << "test" << endl;
   if (startLevel == "0") {
     grid.init(LevelType::Level0, false, "sequence.txt");
   } else if (startLevel == "1") {
@@ -39,11 +40,13 @@ int main(int argc, char *argv[]) {
   } else {  // if no startlevel option is supplied, start at Level 0
     grid.init(LevelType::Level0, false, "sequence.txt");
   }
+  cout << "test" << endl;
 
   //COMMAND INTERPRETER
   try {
       string str[13] = {"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "restart", "hint"};
     while (true) {
+      cout << "test" << endl;
       cin >> cmd;
 
       // pass in file assuming it is valid
