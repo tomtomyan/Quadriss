@@ -26,7 +26,6 @@ int main(int argc, char *argv[]) {
       if (i+1 < argc) startLevel = argv[i+1];
     }
   }
-  cout << "test" << endl;
   if (startLevel == "0") {
     grid.init(LevelType::Level0, false, "sequence.txt");
   } else if (startLevel == "1") {
@@ -40,22 +39,20 @@ int main(int argc, char *argv[]) {
   } else {  // if no startlevel option is supplied, start at Level 0
     grid.init(LevelType::Level0, false, "sequence.txt");
   }
-  cout << "test" << endl;
+  cout << grid << endl;
 
   //COMMAND INTERPRETER
   try {
       string str[13] = {"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "restart", "hint"};
     while (true) {
-      cout << "test" << endl;
       cin >> cmd;
 
       // pass in file assuming it is valid
       // handle if file does not exist case in Level and Grid
       istringstream iss{cmd};
       
-      int n = 1;
-
-      iss >> n;
+      int n;
+      if (!(iss >> n)) n = 1;
       iss >> cmd;
 
       int counter = 0; //counter stores occurences where the cmd is found in the list of strings
@@ -68,6 +65,8 @@ int main(int argc, char *argv[]) {
       }
 
       if (counter != 1) continue; //if it isn't 1 then restart the loop
+
+      //cout << newcmd << endl;
 
       if (newcmd == "left") {
         grid.left(n);

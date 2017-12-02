@@ -1,3 +1,5 @@
+#include "iostream"
+
 #include "grid.h"
 
 using namespace std;
@@ -9,11 +11,12 @@ Grid::~Grid() {
 void Grid::attachDetach(vector<pair<int, int>> &o, vector<pair<int, int>> &c) {
   int oldSize = o.size();
   for (int i = 0; i < oldSize; i++) {
-    currentBlock->notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
+    currentBlock->notifyAttachDetach(false, theGrid[o[i].second][o[i].first], o[i]);
   }
   int curSize = c.size();
   for (int i = 0; i < curSize; i++) {
-    currentBlock->notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
+    cout << "x: " << c[i].first << ", y: " << c[i].second << endl;
+    currentBlock->notifyAttachDetach(true, theGrid[c[i].second][c[i].first], c[i]);
   }
 }
 
@@ -75,10 +78,10 @@ void Grid::checkRows() {
 void Grid::placeLowest() {
   pair<int, int> newLeftBottom = currentLeftBottom;
   while (true) {
-    newLeftBottom.second--;
+    newLeftBottom.second++;
     vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
     if (!checkValid(c)) {
-      newLeftBottom.second++;
+      newLeftBottom.second--;
       break;
     }
   }
@@ -89,9 +92,10 @@ void Grid::placeLowest() {
 }
 
 bool Grid::checkValid(vector<pair<int, int>> coords) {
-  for (int i = 0; coords.size(); i++) {
+  for (int i = 0; i < coords.size(); i++) {
     if(coords.at(i).second<0 || coords.at(i).second>=height || coords.at(i).first<0 || coords.at(i).first>=width) return false;
-    else if (theGrid[coords[i].second][coords[i].first]->getInfo().type != BlockType::None) return false;
+    cout << "checking x: " << coords[i].first << ", y: " << coords[i].second << endl;
+    if (theGrid[coords[i].second][coords[i].first]->getInfo().type != BlockType::None) return false;
   }
   return true;
 }
@@ -127,8 +131,13 @@ void Grid::left(int n) {
     pair<int, int> newLeftBottom = make_pair(currentLeftBottom.first-1, currentLeftBottom.second);
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
     vector<pair<int, int>> current = currentBlock->getCoordinates(newLeftBottom);
+    vector<pair<int, int>> empty;
+    attachDetach(old, empty);
     if (checkValid(current)) {
-      attachDetach(old, current);
+      attachDetach(empty, current);
+      currentLeftBottom.first--;
+    } else {
+      attachDetach(empty, old);
     }
   }
   if(theLevel->getIsHeavy()) down(1);
@@ -139,8 +148,13 @@ void Grid::right(int n) {
     pair<int, int> newLeftBottom = make_pair(currentLeftBottom.first+1, currentLeftBottom.second);
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
     vector<pair<int, int>> current = currentBlock->getCoordinates(newLeftBottom);
+    vector<pair<int, int>> empty;
+    attachDetach(old, empty);
     if (checkValid(current)) {
-      attachDetach(old, current);
+      attachDetach(empty, current);
+      currentLeftBottom.first++;
+    } else {
+      attachDetach(empty, old);
     }
   }
   if(theLevel->getIsHeavy()) down(1);
@@ -151,8 +165,13 @@ void Grid::down(int n) {
     pair<int, int> newLeftBottom = make_pair(currentLeftBottom.first, currentLeftBottom.second+1);
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
     vector<pair<int, int>> current = currentBlock->getCoordinates(newLeftBottom);
+    vector<pair<int, int>> empty;
+    attachDetach(old, empty);
     if (checkValid(current)) {
-      attachDetach(old, current);
+      attachDetach(empty, current);
+      currentLeftBottom.second++;
+    } else {
+      attachDetach(empty, old);
     }
   }
   if(theLevel->getIsHeavy()) down(1);
@@ -162,9 +181,13 @@ void Grid::clockwise(int n) {
   for (int i = 0; i < n; i++) {
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
     vector<pair<int, int>> current = currentBlock->getRotated(true, currentLeftBottom);
+    vector<pair<int, int>> empty;
+    attachDetach(old, empty);
     if (checkValid(current)) {
       currentBlock->rotate(true);
-      attachDetach(old, current);
+      attachDetach(empty, current);
+    } else {
+      attachDetach(empty, old);
     }
   }
   if(theLevel->getIsHeavy()) down(1);
@@ -174,9 +197,13 @@ void Grid::counterClockwise(int n) {
   for (int i = 0; i < n; i++) {
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
     vector<pair<int, int>> current = currentBlock->getRotated(false, currentLeftBottom);
+    vector<pair<int, int>> empty;
+    attachDetach(old, empty);
     if (checkValid(current)) {
       currentBlock->rotate(false);
-      attachDetach(old, current);
+      attachDetach(empty, current);
+    } else {
+      attachDetach(empty, old);
     }
   }
   if(theLevel->getIsHeavy()) down(1);
@@ -197,7 +224,7 @@ void Grid::drop(int n) {
 
 void Grid::setLevel(LevelType level){
   if (level == LevelType::Level0) {
-  
+    theLevel = make_unique<Level0>("sequence.txt"); 
   } else if (level == LevelType::Level1){
     theLevel = make_unique<Level1>();
   } else if (level == LevelType::Level2) {
@@ -260,8 +287,7 @@ void Grid::init(LevelType level, bool isRandom, string fileName) {
   for (int y = 0; y < height; y++) {
     vector<shared_ptr<Cell>> row;
     for (int x = 0; x < width; x++) {
-      shared_ptr<Cell> c;
-      row.emplace_back(c);
+      row.emplace_back(make_shared<Cell>());
     }
     theGrid.emplace_back(row);
   }

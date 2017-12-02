@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "iblock.h"
 using namespace std;
 
@@ -21,7 +23,9 @@ vector<pair<int, int>> IBlock::baseGetCoordinates(int rotState, pair<int, int> l
 }
 
 shared_ptr<Block> IBlock::getThisPtr(){
-  shared_ptr<IBlock> now = shared_from_this();
-  return dynamic_pointer_cast<Block>(now);
+  //shared_ptr<IBlock> now = shared_from_this();
+  shared_ptr<Block> now = shared_from_this();
+  //return dynamic_pointer_cast<Block>(now);
+  return now;
 }
 

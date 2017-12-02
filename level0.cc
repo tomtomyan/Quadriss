@@ -21,7 +21,6 @@ Level0::Level0(string fileName):
 
 void Level0::setIsRandom(bool isRandom) {}
 
-
 void Level0::setFileName(string fileName) {
 	this->fileName = fileName;
 }
