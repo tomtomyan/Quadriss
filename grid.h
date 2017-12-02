@@ -31,7 +31,7 @@ class Grid {
   int score;
   int highScore;
   
-  void setLevel();
+  void setLevel(LevelType level);
   void checkRows();
   void placeLowest();
   bool checkValid(std::vector<std::pair<int, int>> coordinates);

@@ -12,7 +12,7 @@ void Grid::attachDetach(vector<pair<int, int>> &o, vector<pair<int, int>> &c) {
     currentBlock->notifyAttachDetach(false, theGrid[o[i].first][o[i].second], o[i]);
   }
   int curSize = c.size();
-  for (int i = 0; i < curSize(); i++) {
+  for (int i = 0; i < curSize; i++) {
     currentBlock->notifyAttachDetach(true, theGrid[c[i].first][c[i].second], c[i]);
   }
 }
@@ -66,7 +66,7 @@ void Grid::checkRows() {
     for(int j=0; j<width; j++){
       row.emplace_back(make_shared<Cell>());
     }
-    theGrid.insert(theGrid.begin());
+    theGrid.insert(theGrid.begin(), row);
   }
 
   addScore(true, theLevel->getLevel(), numDeleted);
@@ -89,9 +89,9 @@ void Grid::placeLowest() {
 }
 
 bool Grid::checkValid(vector<pair<int, int>> coords) {
-  for (int i = 0; coordinates.size(); i++) {
+  for (int i = 0; coords.size(); i++) {
     if(coords.at(i).second<0 || coords.at(i).second>=height || coords.at(i).first<0 || coords.at(i).first>=width) return false;
-    else if (theGrid[coordinates[i].second][coordinates[i].first]->getInfo().type != BlockType::None) return false;
+    else if (theGrid[coords[i].second][coords[i].first]->getInfo().type != BlockType::None) return false;
   }
   return true;
 }
@@ -195,9 +195,10 @@ void Grid::drop(int n) {
   nextBlock = theLevel->generateBlock();
 }
 
-void setLevel(LevelType level){
+void Grid::setLevel(LevelType level){
   if (level == LevelType::Level0) {
-  else if (level == LevelType::Level1){
+  
+  } else if (level == LevelType::Level1){
     theLevel = make_unique<Level1>();
   } else if (level == LevelType::Level2) {
     theLevel = make_unique<Level2>();
@@ -209,7 +210,7 @@ void setLevel(LevelType level){
 }
 
 void Grid::levelUp(int n) {
-  LevelType level == LevelType::None;
+  LevelType level = LevelType::None;
   if (theLevel->getLevel() == LevelType::Level0) {
     level = LevelType::Level1;
   } else if (theLevel->getLevel() == LevelType::Level1) {
@@ -223,7 +224,7 @@ void Grid::levelUp(int n) {
 }
 
 void Grid::levelDown(int n) {
-  LevelType level == LevelType::None;
+  LevelType level = LevelType::None;
   if (theLevel->getLevel() == LevelType::Level0) {
     level = LevelType::Level4;
   } else if (theLevel->getLevel() == LevelType::Level1) {
@@ -243,14 +244,15 @@ void Grid::random(bool isRandom, string fileName) {
 
 void Grid::setBlock(BlockType type) {
   vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
-  attachDetach(old, vector<pair<int, int>>());
+  vector<pair<int, int>> empty;
+  attachDetach(old, empty);
   currentBlock = theLevel->generateBlock(type); 
   vector<pair<int, int>> cur = currentBlock->getCoordinates(currentLeftBottom);
-  if(!checkValid(cur){
+  if (!checkValid(cur)) {
     currentLeftBottom = make_pair(0, 3);
     cur = currentBlock->getCoordinates(currentLeftBottom);
   }
-  attachDetach(vector<pair<int, int>>(), cur);
+  attachDetach(empty, cur);
 }
 
 void Grid::init(LevelType level, bool isRandom, string fileName) {
@@ -265,11 +267,14 @@ void Grid::init(LevelType level, bool isRandom, string fileName) {
   }
   
   setLevel(level);
-  theLevel->setRandom(isRandom);
+  theLevel->setIsRandom(isRandom);
   theLevel->setFileName(fileName);
   currentLeftBottom = make_pair(0,3);
   currentBlock = theLevel->generateBlock();
-  attachDetach(vector<pair<int, int>>(), currentBlock->getCoordinates(currentLeftBottom));
+
+  vector<pair<int, int>> empty;
+  vector<pair<int, int>> coords = currentBlock->getCoordinates(currentLeftBottom);
+  attachDetach(empty, coords);
   nextBlock = theLevel->generateBlock();
 }
 
@@ -322,7 +327,7 @@ std::ostream &operator<<(std::ostream &out, const Grid &g) {
         out << "Z";
       } else if (g.theGrid[i][j]->getInfo().type == BlockType::TBlock) {
         out << "T";
-      } else if (g.theGrid[i][j]->getInfo().type == BlockType::OneCell) {
+      } else if (g.theGrid[i][j]->getInfo().type == BlockType::OneCellBlock) {
         out << "o";
       }  else {
         out << " ";

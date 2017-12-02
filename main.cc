@@ -101,6 +101,8 @@ int main(int argc, char *argv[]) {
       } else if (newcmd == "hint") {
         grid.hint();
       }
+
+      cout << grid;
     }
   } catch (ios::failure &) {}
 
