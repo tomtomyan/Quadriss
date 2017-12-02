@@ -25,7 +25,7 @@ class Level {
   BlockType inputInterpreter(std::string input);
 
 	public:
-	Level(LevelType, bool, bool);
+	Level(LevelType, bool, bool, std::string fileName = "");
 	LevelType getLevel();
 	bool getIsHeavy();
 	virtual void setIsRandom(bool) = 0;

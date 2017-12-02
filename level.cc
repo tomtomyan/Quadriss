@@ -4,8 +4,8 @@
 #include <string>
 using namespace std;
 
-Level::Level(LevelType level, bool isHeavy, bool isRandom):
-	level{level}, isHeavy{isHeavy}, isRandom{isRandom} {}
+Level::Level(LevelType level, bool isHeavy, bool isRandom, string fileName):
+	level{level}, isHeavy{isHeavy}, isRandom{isRandom}, fileName{fileName} {}
 
 
 LevelType Level::getLevel() {

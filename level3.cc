@@ -15,12 +15,12 @@
 using namespace std;
 
 Level3::Level3(string fileName):
-        Level{LevelType::Level3, true, true}, fileStream{ifstream{fileName}} {}
+        Level{LevelType::Level3, true, true} {}
 
 
 void Level3::setIsRandom(bool isRandom) {
-        if ((isRandom == false) && !(fileStream.is_open())) {
-                throw InvalidFile{};
+        if (isRandom == false) {
+                fileStream = ifstream{getFileName()};
         }
 	this->isRandom = isRandom;
 }
