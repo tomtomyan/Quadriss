@@ -9,26 +9,40 @@ int main(int argc, char *argv[]) {
   cin.exceptions(ios::eofbit|ios::failbit);
   string cmd;
   Grid grid;
-  string startLevel = argv[__]; /////insert index of startlevel cmd arg
+
+  bool textOnly = false;
+  string scriptFile = "";
+  string startLevel = "0"; //default start level
+
+  //COMMAD LINE ARGUMENTS
+  for (int i = 1; i < argc; i++) {
+    if (argv[i] == std::string("-text")) {
+      textOnly = true;
+    } else if (argv[i] == std::string("-seed")) {
+      //set random number seed
+    } else if (argv[i] == std::string("-scriptfile")) {
+      if (i+1 < argc) scriptFile = argv[i+1];
+    } else if (argv[i] == std::string("-startlevel")) {
+      if (i+1 < argc) startLevel = argv[i+1];
+    }
+  }
   if (startLevel == "0") {
     grid.init(LevelType::Level0, false, "sequence.txt");
-  }
-  else if (startLevel == "1") {
+  } else if (startLevel == "1") {
     grid.init(LevelType::Level1);
-  }
-  else if (startLevel == "2") {
+  } else if (startLevel == "2") {
     grid.init(LevelType::Level2);
-  }
-  else if (startLevel == "3") {
+  } else if (startLevel == "3") {
     grid.init(LevelType::Level3);
-  }
-  else if (startLevel == "4") {
+  } else if (startLevel == "4") {
     grid.init(LevelType::Level4);
-  }
-  else {  // if no startlevel option is supplied, start at Level 0
+  } else {  // if no startlevel option is supplied, start at Level 0
     grid.init(LevelType::Level0, false, "sequence.txt");
   }
+
+  //COMMAND INTERPRETER
   try {
+      string str[13] = {"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "restart", "hint"};
     while (true) {
       cin >> cmd;
 
@@ -41,52 +55,51 @@ int main(int argc, char *argv[]) {
       iss >> n;
       iss >> cmd;
 
-      string str[13] = {"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "restart", "hint"};
-      int counter = 0;
+      int counter = 0; //counter stores occurences where the cmd is found in the list of strings
       string newcmd;
       for (int i = 0; i < 13; i++) {
         if (str[i].find(cmd) == 0) {
           counter++;
-          newcmd = str[i]
+          newcmd = str[i];
         }
       }
 
-      if (counter != 1) continue;
+      if (counter != 1) continue; //if it isn't 1 then restart the loop
 
       if (newcmd == "left") {
         grid.left(n);
-      } else if (cmd.find("ri") == 0) {
+      } else if (newcmd == "right") {
 	      grid.right(n);
-      } else if (cmd.find("do") == 0) {
+      } else if (newcmd == "down") {
 	      grid.down(n);
-      } else if (cmd.find("cl") == 0) {
+      } else if (newcmd == "clockwise") {
 	      grid.clockwise(n);
-      } else if (cmd == "counterclockwise") {
-	      grid.counterclockwise(n);
-      } else if (cmd == "drop") {
+      } else if (newcmd == "counterclockwise") {
+	      grid.counterClockwise(n);
+      } else if (newcmd == "drop") {
 	      grid.drop(n);
-      } else if (cmd == "levelup") {
+      } else if (newcmd == "levelup") {
 	      grid.levelUp(n);
-      } else if (cmd == "leveldown") {
+      } else if (newcmd == "leveldown") {
 	      grid.levelDown(n);
-      } else if (cmd == "norandom") {
+      } else if (newcmd == "norandom") {
         string file;
         if (cin >> file) {
           ifstream fileStream{file};
           // create copy ctor for Level 3/4, pass in new fileStream???
           grid.random(false, file);
         }
-      } else if (cmd == "random") {
-	  
-      } else if (cmd == "sequence") {
+      } else if (newcmd == "random") {
+	      grid.random(true);
+      } else if (newcmd == "sequence") {
 	      string file;
 	      if (cin >> file) {
 	        grid.random(false, file);
 	      }
-      } else if (cmd == "restart") {
-
-      } else if (cmd == "hint") {
-
+      } else if (newcmd == "restart") {
+        
+      } else if (newcmd == "hint") {
+        grid.hint();
       }
     }
   } catch (ios::failure &) {}
