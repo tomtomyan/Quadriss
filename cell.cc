@@ -3,6 +3,11 @@
 #include "cell.h"
 using namespace std;
 
+shared_ptr<Subject<Info, State>> Cell::getThisSubjectPtr(){
+  shared_ptr<Cell> cell = shared_from_this();
+  return dynamic_pointer_cast<Subject<Info, State>>(cell);
+}
+
 void Cell::notify(shared_ptr<Subject<Info, State>> whoFrom){
   State wfState = whoFrom->getState();
   if(wfState.message == Message::Attach){

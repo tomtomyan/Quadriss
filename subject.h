@@ -15,6 +15,7 @@ template <typename InfoType, typename StateType> class Subject {
    void detach(std::shared_ptr<Observer<InfoType, StateType>> o);
    void notifyObservers();
    virtual InfoType getInfo() const = 0;
+   virtual std::shared_ptr<Subject<InfoType, StateType>> getThisSubjectPtr() = 0;
    StateType getState() const;
 //   virtual ~Subject<InfoType, StateType>() = 0;
 };
@@ -35,7 +36,7 @@ void Subject<InfoType, StateType>::detach(std::shared_ptr<Observer<InfoType, Sta
 
 template <typename InfoType, typename StateType>
 void Subject<InfoType, StateType>::notifyObservers(){
-  for (auto ob : observers) ob->notify(std::shared_ptr<Subject<InfoType, StateType>>(this));
+  for (auto ob : observers) ob->notify(getThisSubjectPtr());
 }
 
 template <typename InfoType, typename StateType>

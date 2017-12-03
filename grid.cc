@@ -8,6 +8,16 @@ Grid::~Grid() {
   theGrid.clear();
 }
 
+GameState Grid::getGameState() const{
+  GameState gs;
+  gs.level = theLevel->getLevel();
+  gs.playScore = score;
+  gs.highScore = highScore;
+  gs.nextBlock = nextBlock->getInfo().type;
+  gs.nextBlockCoords = nextBlock->getCoordinates(make_pair(0, 3));
+  return gs;
+}
+
 void Grid::detach(vector<pair<int, int>> &v) {
   for (size_t i = 0; i < v.size(); i++) {
     currentBlock->notifyAttachDetach(false, theGrid[v[i].second][v[i].first], v[i]);
@@ -22,9 +32,9 @@ void Grid::attach(vector<pair<int, int>> &v) {
 
 void Grid::checkRows() {
   vector<pair<int, int>> c = currentBlock->getCoordinates(currentLeftBottom);
-  int size = c.size();
   vector<int> rowsDeleted;
-  for (size_t i = 0; i < size; i++) {
+  int size = c.size();
+  for(int i=0; i<size; i++){
     int y = c[i].second;
     bool clear = true;
     for(size_t x = 0; x < width; x++) {
@@ -37,9 +47,9 @@ void Grid::checkRows() {
       rowsDeleted.emplace_back(y);
       for (size_t x = 0; x < width; x++) {
         LevelType deletedCellLevel = theGrid[y][x]->deleteCell(make_pair(x, y));
-	if(deletedCellLevel != LevelType::None){
-	  addScore(false, deletedCellLevel, 0);
-	}
+      	if(deletedCellLevel != LevelType::None){
+  	      addScore(false, deletedCellLevel, 0);
+      	}
       }
     }
   }
@@ -55,7 +65,7 @@ void Grid::checkRows() {
       int cur = rowsDeleted.at(i);
       if(cur<min){
         min = cur;
-	posMin = i;
+	      posMin = i;
       }
     }
     sortedDeleted.emplace_back(min);
@@ -90,6 +100,7 @@ void Grid::placeLowest() {
 
   vector<pair<int, int>> current = currentBlock->getCoordinates(newLeftBottom);
   attach(current);
+  currentLeftBottom = newLeftBottom;
 }
 
 bool Grid::checkValid(vector<pair<int, int>> coords) {
@@ -287,7 +298,12 @@ void Grid::init(LevelType level, bool isRandom, string fileName) {
   for (int y = 0; y < height; y++) {
     vector<shared_ptr<Cell>> row;
     for (int x = 0; x < width; x++) {
-      row.emplace_back(make_shared<Cell>());
+      shared_ptr<Cell> c = make_shared<Cell>();
+      int size = ob.size();
+      for(int i=0; i<size; i++){
+        c->attach(ob.at(i));
+      }
+      row.emplace_back(c);
     }
     theGrid.emplace_back(row);
   }
@@ -383,3 +399,4 @@ std::ostream &operator<<(std::ostream &out, const Grid &g) {
   
   return out;
 }
+

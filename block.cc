@@ -7,6 +7,11 @@ Block::Block(BlockType type, LevelType level, DisplayFormat format) :
 
 Block::~Block(){};
 
+shared_ptr<Subject<Info, State>> Block::getThisSubjectPtr(){
+  shared_ptr<Block> block = getThisPtr();
+  return dynamic_pointer_cast<Subject<Info, State>>(block);
+}
+
 int Block::getCellsLeft() const{
   return cellsLeft;
 }
