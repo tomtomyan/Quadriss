@@ -29,7 +29,7 @@ class Grid {
   const int height = 15;
 
   int score;
-  int highScore;
+  int highScore = 100;
   
   void setLevel(LevelType level);
   void checkRows();

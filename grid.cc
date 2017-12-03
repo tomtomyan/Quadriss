@@ -40,7 +40,7 @@ void Grid::checkRows() {
 	if(deletedCellLevel != LevelType::None){
 	  addScore(false, deletedCellLevel, 0);
 	}
-      }      
+      }
     }
   }
 
@@ -77,6 +77,9 @@ void Grid::checkRows() {
 
 void Grid::placeLowest() {
   pair<int, int> newLeftBottom = currentLeftBottom;
+  vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
+  vector<pair<int, int>> empty;
+  attachDetach(old, empty);
   while (true) {
     newLeftBottom.second++;
     vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
@@ -86,9 +89,8 @@ void Grid::placeLowest() {
     }
   }
   //detach old cells and attach new cells
-  vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
   vector<pair<int, int>> current = currentBlock->getCoordinates(newLeftBottom);
-  attachDetach(old, current);
+  attachDetach(empty, current);
 }
 
 bool Grid::checkValid(vector<pair<int, int>> coords) {
@@ -214,12 +216,19 @@ void Grid::drop(int n) {
   checkRows();
   shared_ptr<Block> o = theLevel->obstacle(currentLeftBottom);//change this
   if (o) {
+    cout << "obstacle found" << endl;
     currentBlock = o;
     placeLowest();
     checkRows();
   }
   currentBlock = nextBlock;
   nextBlock = theLevel->generateBlock();
+
+  currentLeftBottom.first = 0;
+  currentLeftBottom.second = 3;
+  vector<pair<int, int>> empty;
+  vector<pair<int, int>> current = currentBlock->getCoordinates(currentLeftBottom);
+  attachDetach(empty, current);
 }
 
 void Grid::setLevel(LevelType level){
@@ -364,6 +373,21 @@ std::ostream &operator<<(std::ostream &out, const Grid &g) {
   out << "-----------" << endl;
   out << "Next:" << endl;
   //print next block
-  //if (nextBlock.getInfo().type == BlockType::J
+  if (g.nextBlock->getInfo().type == BlockType::IBlock) {
+    out << "IIII" << endl;
+  } else if (g.nextBlock->getInfo().type == BlockType::JBlock) {
+    out << "J" << endl << "JJJ" << endl;
+  } else if (g.nextBlock->getInfo().type == BlockType::LBlock) {
+    out << "  L" << endl << "LLL" << endl;
+  } else if (g.nextBlock->getInfo().type == BlockType::OBlock) {
+    out << "OO" << endl << "OO" << endl;
+  } else if (g.nextBlock->getInfo().type == BlockType::SBlock) {
+    out << " SS" << endl << "SS" << endl;
+  } else if (g.nextBlock->getInfo().type == BlockType::ZBlock) {
+    out << "ZZ" << endl << " ZZ" << endl;
+  } else if (g.nextBlock->getInfo().type == BlockType::TBlock) {
+    out << "TTT" << endl << " T" << endl;
+  }
+  
   return out;
 }
