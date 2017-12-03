@@ -27,7 +27,7 @@ vector<pair<int, int>> TBlock::baseGetCoordinates(int rotState, pair<int, int> l
   }
   else if(rotState == 3){
     coords.emplace_back(make_pair(leftBottom.first+1, leftBottom.second-1));
-    for(int i; i<3; i++){
+    for(int i=0; i<3; i++){
       coords.emplace_back(make_pair(leftBottom.first, leftBottom.second-i));
     }
   }

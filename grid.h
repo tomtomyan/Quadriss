@@ -16,6 +16,7 @@
 #include "observer.h"
 #include "info.h"
 #include "state.h"
+#include "gameState.h"
 
 class Grid {
   std::vector<std::vector<std::shared_ptr<Cell>>> theGrid;
@@ -29,7 +30,7 @@ class Grid {
   const int width = 11;
   const int height = 15;
 
-  int score;
+  int score = 0;
   int highScore = 100;
   
   void setLevel(LevelType level);
@@ -42,6 +43,7 @@ class Grid {
   public:
   ~Grid();
 
+  GameState getGameState() const;
   void addScore(bool isLine, LevelType level, int numLines);
   void left(int);
   void right(int);
