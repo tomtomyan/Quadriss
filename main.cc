@@ -3,8 +3,8 @@
 #include <sstream>
 #include <algorithm>
 #include "grid.h"
-
 using namespace std;
+
 
 int main(int argc, char *argv[]) {
   cin.exceptions(ios::eofbit|ios::failbit);
@@ -18,33 +18,50 @@ int main(int argc, char *argv[]) {
   }
 
   bool textOnly = false;
-  string scriptFile = "";
-  string startLevel = "0"; //default start level
+  string scriptFile = "sequence.txt";
+  string startLevel = "0"; // default start level
+  bool isSequence = false;
+  bool seqFirstTime = true;
+  string fileName;  // if isSequence is true, read commands from this file
+  ifstream fileStream;
+  int seed = 1;
 
   //COMMAD LINE ARGUMENTS
   for (int i = 1; i < argc; i++) {
     if (argv[i] == std::string("-text")) {
       textOnly = true;
-    } else if (argv[i] == std::string("-seed")) {
-      //set random number seed
-    } else if (argv[i] == std::string("-scriptfile")) {
-      if (i+1 < argc) scriptFile = argv[i+1];
+    } else if (argv[i] == string("-seed")) {
+      if (i+1 < argc) {
+	int n;
+	string s = argv[i+1];
+	istringstream iss{s};
+	if (iss >> n) seed = n;
+	++i;
+      }
+    } else if (argv[i] == string("-scriptfile")) {
+      if (i+1 < argc) {
+	scriptFile = argv[i+1];
+	++i;
+      }
     } else if (argv[i] == std::string("-startlevel")) {
-      if (i+1 < argc) startLevel = argv[i+1];
+      if (i+1 < argc) {
+	startLevel = argv[i+1];
+	++i;
+      }
     }
   }
   if (startLevel == "0") {
-    grid.init(LevelType::Level0, false, "sequence.txt");
+    grid.init(LevelType::Level0, seed, false, scriptFile);
   } else if (startLevel == "1") {
-    grid.init(LevelType::Level1);
+    grid.init(LevelType::Level1, seed);
   } else if (startLevel == "2") {
-    grid.init(LevelType::Level2);
+    grid.init(LevelType::Level2, seed);
   } else if (startLevel == "3") {
-    grid.init(LevelType::Level3);
+    grid.init(LevelType::Level3, seed);
   } else if (startLevel == "4") {
-    grid.init(LevelType::Level4);
+    grid.init(LevelType::Level4, seed);
   } else {  // if no startlevel option is supplied, start at Level 0
-    grid.init(LevelType::Level0, false, "sequence.txt");
+    grid.init(LevelType::Level0, seed, false, scriptFile);
   }
   cout << grid << endl;
 
@@ -52,10 +69,65 @@ int main(int argc, char *argv[]) {
   try {
       string str[13] = {"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "restart", "hint"};
     while (true) {
-      cin >> cmd;
+      if (isSequence && seqFirstTime) {
+	seqFirstTime = false;
+	fileStream = ifstream{fileName};
+	if (!(fileStream >> cmd)) {
+	  isSequence = false;
+	  cout << grid;
+	  cout << "End of sequence file. Start providing input." << endl;
+	  continue;
+	}
+      }
+      else if (isSequence) {
+	if (!(fileStream >> cmd)) {
+	  isSequence = false;
+	  cout << grid;
+          cout << "End of sequence file. Start providing input." << endl;
+	  continue;
+	}
+      }
+      else {
+        cin >> cmd;
+      }
 
-
-        //////////// New feature: Renaming commands //////////////
+      if (cmd == "I") {
+	grid.setBlock(BlockType::IBlock);
+	cout << grid;
+	continue;
+      }
+      else if (cmd == "J") {
+	grid.setBlock(BlockType::JBlock);
+	cout << grid;
+	continue;
+      }
+      else if (cmd == "L") {
+	grid.setBlock(BlockType::LBlock);
+	cout << grid;
+	continue;
+      }
+      else if (cmd == "O") {
+        grid.setBlock(BlockType::OBlock);
+	cout << grid;
+	continue;
+      }
+      else if (cmd == "S") {
+        grid.setBlock(BlockType::SBlock);
+	cout << grid;
+	continue;
+      }
+      else if (cmd == "Z") {
+        grid.setBlock(BlockType::ZBlock);
+	cout << grid;
+	continue;
+      }
+      else if (cmd == "T") {
+        grid.setBlock(BlockType::TBlock);
+	cout << grid;
+	continue;
+      }
+      
+      //////////// New feature: Renaming commands //////////////
       string newCmdName;
       if (cmd == "rename") {
          cin >> cmd;
@@ -79,6 +151,7 @@ int main(int argc, char *argv[]) {
             continue;
          }
          allCmds.at(index).emplace_back(newCmdName);
+	 cout << grid;
          continue;
       }
       // first search if cmd is in allCmds
@@ -111,7 +184,7 @@ int main(int argc, char *argv[]) {
 	    cout << grid;
          }
       }
-        //////////////////////////////////////////////////////////
+      //////////////////////////////////////////////////////////
 
 
       // pass in file assuming it is valid
@@ -152,19 +225,19 @@ int main(int argc, char *argv[]) {
       } else if (newcmd == "leveldown") {
 	      grid.levelDown(n);
       } else if (newcmd == "norandom") {
-        string file;
-        if (cin >> file) {
-          grid.random(false, file);
-        }
+          string file;
+          if (cin >> file) {
+            grid.random(false, file);
+          }
       } else if (newcmd == "random") {
 	      grid.random(true);
       } else if (newcmd == "sequence") {
-	      string file;
-	      if (cin >> file) {
-	        grid.random(false, file);
-	      }
+          if (cin >> fileName) {
+	    seqFirstTime = true;
+            isSequence = true;
+          }
       } else if (newcmd == "restart") {
-        
+          grid.init(LevelType::Level0, false, scriptFile);
       } else if (newcmd == "hint") {
         grid.hint();
       }
