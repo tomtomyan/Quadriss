@@ -22,6 +22,7 @@ class Grid {
   std::unique_ptr<Level> theLevel;
   std::shared_ptr<Block> currentBlock;
   std::shared_ptr<Block> nextBlock;
+  std::shared_ptr<Block> hintBlock;
   std::vector<std::shared_ptr<Observer<Info, State>>> ob;
   std::pair<int, int> currentLeftBottom;
 

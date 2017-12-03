@@ -8,6 +8,10 @@ Grid::~Grid() {
   theGrid.clear();
 }
 
+void Grid::checkHint() {
+  
+}
+
 void Grid::detach(vector<pair<int, int>> &v) {
   for (size_t i = 0; i < v.size(); i++) {
     currentBlock->notifyAttachDetach(false, theGrid[v[i].second][v[i].first], v[i]);
@@ -304,8 +308,38 @@ void Grid::init(LevelType level, bool isRandom, string fileName) {
 }
 
 void Grid::hint() {
+  int highestY = 0;
+  vector<pair<int, int>> coords;
   for (int i = 0; i < 8; i++) {
+    for (int j = 0; j < 4; j++) {
+      int currentY = 0;
+      pair<int, int> newLeftBottom = make_pair(i, 3);
+      while (true) {
+        newLeftBottom.second++;
+        vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
+        if (!checkValid(c)) {
+          newLeftBottom.second--;
+          break;
+        }
+      }
+      vector<pair<int, int>> current = currentBlock->getCoordinates(newLeftBottom);
+      for (int k = 0; k < current.size(); k++) {
+        currentY += current[k].second;
+      }
 
+      if (currentY > highestY) {
+        highestY = currentY;
+        coords = current;
+      }
+
+      currentBlock->rotate(true); //rotates so it checks next rotation
+    }
+  }
+  
+  hintBlock = theLevel->makeBlock(currentBlock->getInfo().type, currentBlock->getInfo().level, DisplayFormat::Hint);
+
+  for (size_t i = 0; i < coords.size(); i++) {
+    hintBlock->notifyAttachDetach(true, theGrid[coords[i].second][coords[i].first], coords[i]);
   }
 }
 
@@ -340,7 +374,9 @@ std::ostream &operator<<(std::ostream &out, const Grid &g) {
   out << "-----------" << endl;
   for (int i = 0; i < 15; i++) {
     for (int j = 0; j < 11; j++) {
-      if (g.theGrid[i][j]->getInfo().type == BlockType::IBlock) {
+      if (g.theGrid[i][j]->getInfo().format == DisplayFormat::Hint) {
+        out << "?";
+      } else if (g.theGrid[i][j]->getInfo().type == BlockType::IBlock) {
         out << "I";
       } else if (g.theGrid[i][j]->getInfo().type == BlockType::JBlock) {
         out << "J";

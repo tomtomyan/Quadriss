@@ -21,7 +21,6 @@ class Level {
 	bool isRandom;
 	std::string fileName;
 	
-	std::shared_ptr<Block> makeBlock(BlockType type, LevelType level, DisplayFormat format = DisplayFormat::Standard);
   BlockType inputInterpreter(std::string input);
 
 	public:
@@ -34,6 +33,7 @@ class Level {
 	std::string getFileName();
 //	virtual void setFileStream(ifstream &) = 0; // NEW
 	std::ifstream &getFileStream();  // NEW
+	std::shared_ptr<Block> makeBlock(BlockType type, LevelType level, DisplayFormat format = DisplayFormat::Standard);
 	virtual std::shared_ptr<Block> generateBlock(BlockType type = BlockType::None) = 0;
 	virtual std::shared_ptr<Block> obstacle(std::pair<int,int> &) = 0;
 };
