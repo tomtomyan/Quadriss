@@ -1,12 +1,13 @@
 #include <iostream>
 #include <sstream>
+#include <iomanip>
 #include "graphicsdisplay.h"
 #include "info.h"
 #include "subject.h"
 using namespace std;
 
 GraphicsDisplay::GraphicsDisplay(int winWidth, int winHeight):
- winWidth{winWidth}, winHeight{winHeight}, xw{winWidth, winHeight}, cellSize{winHeight/24 < winWidth/13 ? winHeight/24 : winWidth/13} {
+ winWidth{winWidth}, winHeight{winHeight}, xw{winWidth, winHeight}, cellSize{(winHeight/24) < (winWidth/13) ? (winHeight/24) : (winWidth/13)} {
   for(int y=0; y<gridHeight; y++){
     vector<pair<bool, int>> row;
     for(int x=0; x<gridWidth; x++){
@@ -31,19 +32,28 @@ int GraphicsDisplay::colourDefinition(BlockType type, DisplayFormat format) cons
   int colour = blankColour;
   if(format == DisplayFormat::Standard){
     switch(type){
-      case BlockType::IBlock: colour = Xwindow::Green;
-      case BlockType::JBlock: colour = Xwindow::Blue;
-      case BlockType::LBlock: colour = Xwindow::Cyan;
-      case BlockType::SBlock: colour = Xwindow::Yellow;
-      case BlockType::ZBlock: colour = Xwindow::Magenta;
-      case BlockType::OBlock: colour = Xwindow::Orange;
-      case BlockType::TBlock: colour = Xwindow::Red;
+      case BlockType::IBlock:  colour = Xwindow::Green;
+                               break;
+      case BlockType::JBlock:  colour = Xwindow::Blue;
+                               break;
+      case BlockType::LBlock:  colour = Xwindow::Cyan;
+                               break;
+      case BlockType::SBlock:  colour = Xwindow::Yellow;
+                               break;
+      case BlockType::ZBlock:  colour = Xwindow::Magenta;
+                               break;
+      case BlockType::OBlock:  colour = Xwindow::Orange;
+                               break;
+      case BlockType::TBlock:  colour = Xwindow::Red;
+                               break;
     }
   }
   else{
     switch(format){
       case DisplayFormat::Obstacle: colour = Xwindow::Brown;
+                                    break;
       case DisplayFormat::Hint: colour = Xwindow::Black;
+                                break;
     }
   }
   return colour;
@@ -51,15 +61,16 @@ int GraphicsDisplay::colourDefinition(BlockType type, DisplayFormat format) cons
 
 void GraphicsDisplay::redraw(GameState gameState){
   // Draws text at top
+  xw.fillRectangle(0, 0, cellSize*gridWidth, (cellSize*2)+(cellSize/2), blankColour);
   ostringstream levelStr;
   levelStr << gameState.level;
-  xw.drawString(gridXShift, cellSize/2, levelStr.str());
+  xw.drawString(gridXShift, cellSize, levelStr.str());
   ostringstream scoreStr;
-  scoreStr << "Score: " << gameState.playScore;
-  xw.drawString(gridXShift, (cellSize/2)+cellSize, scoreStr.str());
+  scoreStr << "Score: " << setw(15)  << gameState.playScore;
+  xw.drawString(gridXShift, cellSize*2, scoreStr.str());
   ostringstream hiScoreStr;
-  hiScoreStr << "Hi Score: " << gameState.highScore;
-  xw.drawString(gridXShift, (cellSize/2)+cellSize, hiScoreStr.str());
+  hiScoreStr << "High Score: " << setw(10)  << gameState.highScore;
+  xw.drawString(gridXShift, cellSize*3, hiScoreStr.str());
   // Draws grid
   if(needShift){
     for(int y=0; y<maxRowShift; y++){
@@ -75,12 +86,19 @@ void GraphicsDisplay::redraw(GameState gameState){
     xw.fillRectangle(gridXShift+(cellSize*change.first.first), gridYShift+(cellSize*change.first.second), cellSize, cellSize, change.second);
   }
   queue.clear();
+  needShift = false;
+  maxRowShift = 0;
   // Draws next block
   int numCells = gameState.nextBlockCoords.size();
   int col = colourDefinition(gameState.nextBlock, DisplayFormat::Standard);
+  for(int x=0; x<4; x++){
+    for(int y=0; y<3; y++){
+      xw.fillRectangle(gridXShift+(cellSize*x), gridYShift+(cellSize*(gridHeight+y+1)), cellSize, cellSize, blankColour);
+    }
+  }
   for(int i=0; i<numCells; i++){
     pair<int, int> cur = gameState.nextBlockCoords.at(i);
-    xw.fillRectangle(gridXShift+(cellSize*cur.first), gridYShift+(cellSize*(gridHeight+cur.second+1)), cellSize, cellSize,col);
+    xw.fillRectangle(gridXShift+(cellSize*cur.first), gridYShift+(cellSize*(gridHeight+cur.second)), cellSize, cellSize,col);
   }
 }
 
@@ -101,7 +119,7 @@ void GraphicsDisplay::notify(shared_ptr<Subject<Info, State>> whoNotified) {
     }
     if(deleteRow){
       needShift = true;
-      maxRowShift = coords.second > maxRowShift ? coords.second : maxRowShift;
+      maxRowShift = coords.second+1 > maxRowShift ? coords.second+1 : maxRowShift;
       grid.erase(grid.begin()+coords.second);
       vector<pair<bool, int>> row;
       for(int i=0; i<gridWidth; i++){
