@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include "graphicsdisplay.h"
 #include "info.h"
 #include "subject.h"
@@ -19,14 +20,14 @@ GraphicsDisplay::GraphicsDisplay(int winWidth, int winHeight):
   xw.fillRectangle(0, 0, winWidth, winHeight, blankColour); //fills background
   xw.fillRectangle(gridXShift-1, gridYShift-1, (cellSize*gridWidth)+2, 1); //draws border
   xw.fillRectangle(gridXShift-1, gridYShift+(cellSize*15)+1, (cellSize*gridWidth)+2, 1);
-  xw.fillRectancle(gridXShift-1, gridYShift-1, 1, (cellSize*gridHeight)+2);
-  xw.fillRectancle(gridXShift+(cellSize*gridWidth)+1, gridYShift-1, 1, (cellSize*gridHeight)+2);
+  xw.fillRectangle(gridXShift-1, gridYShift-1, 1, (cellSize*gridHeight)+2);
+  xw.fillRectangle(gridXShift+(cellSize*gridWidth)+1, gridYShift-1, 1, (cellSize*gridHeight)+2);
   needShift = true;
   maxRowShift = gridHeight;
 }
 
 //  enum {White=0, Black, Red, Green, Blue, Cyan, Yellow, Magenta, Orange, Brown}; // Available colours.
-int colourDefinition(BlockType type, DisplayFormat format) const{
+int GraphicsDisplay::colourDefinition(BlockType type, DisplayFormat format) const{
   int colour = blankColour;
   if(format == DisplayFormat::Standard){
     switch(type){
@@ -37,18 +38,18 @@ int colourDefinition(BlockType type, DisplayFormat format) const{
       case BlockType::ZBlock: colour = Xwindow::Magenta;
       case BlockType::OBlock: colour = Xwindow::Orange;
       case BlockType::TBlock: colour = Xwindow::Red;
-      case BlockType::None: colour = blankColour;
     }
   }
   else{
     switch(format){
       case DisplayFormat::Obstacle: colour = Xwindow::Brown;
       case DisplayFormat::Hint: colour = Xwindow::Black;
+    }
   }
   return colour;
 }
 
-void redraw(GameState gameState) const{
+void GraphicsDisplay::redraw(GameState gameState){
   // Draws text at top
   ostringstream levelStr;
   levelStr << gameState.level;
@@ -58,7 +59,7 @@ void redraw(GameState gameState) const{
   xw.drawString(gridXShift, (cellSize/2)+cellSize, scoreStr.str());
   ostringstream hiScoreStr;
   hiScoreStr << "Hi Score: " << gameState.highScore;
-  xw.drawString(gridXShift, (cellSize/2)+cellSize, highScoreStr.str());
+  xw.drawString(gridXShift, (cellSize/2)+cellSize, hiScoreStr.str());
   // Draws grid
   if(needShift){
     for(int y=0; y<maxRowShift; y++){
@@ -76,7 +77,7 @@ void redraw(GameState gameState) const{
   queue.clear();
   // Draws next block
   int numCells = gameState.nextBlockCoords.size();
-  int col = colourDefinition(gameState.nextBlock);
+  int col = colourDefinition(gameState.nextBlock, DisplayFormat::Standard);
   for(int i=0; i<numCells; i++){
     pair<int, int> cur = gameState.nextBlockCoords.at(i);
     xw.fillRectangle(gridXShift+(cellSize*cur.first), gridYShift+(cellSize*(gridHeight+cur.second+1)), cellSize, cellSize,col);
@@ -93,7 +94,7 @@ void GraphicsDisplay::notify(shared_ptr<Subject<Info, State>> whoNotified) {
     grid.at(coords.second).at(coords.first) = make_pair(true, colour);
     bool deleteRow = true;
     for(int i=0; i<gridWidth; i++){
-      if(!(grid.at(coords.second).at(i))){
+      if(!(grid.at(coords.second).at(i).first)){
         deleteRow = false;
         break;
       }
@@ -110,7 +111,7 @@ void GraphicsDisplay::notify(shared_ptr<Subject<Info, State>> whoNotified) {
     }
   }
   else{
-    grids.at(coords.second).at(coords.first) = make_pair(false, colour);
+    grid.at(coords.second).at(coords.first) = make_pair(false, colour);
     queue.emplace_back(make_pair(coords, colour));
   }
 }

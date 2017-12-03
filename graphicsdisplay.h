@@ -2,10 +2,12 @@
 #define GRAPHICSDISPLAY_H
 #include <iostream>
 #include <vector>
+#include <memory>
+#include <string>
+#include "info.h"
 #include "observer.h"
 #include "state.h"
 #include "window.h"
-#include "info.h"
 #include "gameState.h"
 class Cell;
 
@@ -26,7 +28,7 @@ class GraphicsDisplay: public Observer<Info, State> {
  public:
   GraphicsDisplay(int gridSize, int winSize);
 
-  void redraw(GameState gameState) const;
-  void notify(Subject<Info, State> &whoNotified) override;
+  void redraw(GameState gameState);
+  void notify(std::shared_ptr<Subject<Info, State>> whoNotified) override;
 };
 #endif
