@@ -26,6 +26,7 @@ class Block : public Subject<Info, State>{
   virtual ~Block() = 0;
   int getCellsLeft() const;
   int getRotationState() const;
+  void setRotationState(int);
   Info getInfo() const;
   std::vector<std::pair<int, int>> getRotated(bool clockwise, std::pair<int, int> leftBottom) const;
   void rotate(bool clockwise);

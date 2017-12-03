@@ -20,6 +20,10 @@ int Block::getRotationState() const{
   return rotationState;
 }
 
+void Block::setRotationState(int n) {
+  rotationState = n;
+}
+
 Info Block::getInfo() const{
   return Info{level, type, format};
 }

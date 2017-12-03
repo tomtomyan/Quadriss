@@ -47,7 +47,7 @@ void Grid::checkRows() {
   for(int i=0; i<size; i++){
     int y = c[i].second;
     bool clear = true;
-    for(size_t x = 0; x < width; x++) {
+    for(int x = 0; x < width; x++) {
       if (theGrid[y][x]->getInfo().type == BlockType::None) {
         clear = false;
         break;
@@ -55,7 +55,7 @@ void Grid::checkRows() {
     }
     if (clear) {
       rowsDeleted.emplace_back(y);
-      for (size_t x = 0; x < width; x++) {
+      for (int x = 0; x < width; x++) {
         LevelType deletedCellLevel = theGrid[y][x]->deleteCell(make_pair(x, y));
       	if(deletedCellLevel != LevelType::None){
   	      addScore(false, deletedCellLevel, 0);
@@ -114,7 +114,7 @@ void Grid::placeLowest() {
 }
 
 bool Grid::checkValid(vector<pair<int, int>> coords) {
-  for (int i = 0; i < coords.size(); i++) {
+  for (size_t i = 0; i < coords.size(); i++) {
     if(coords.at(i).second<0 || coords.at(i).second>=height || coords.at(i).first<0 || coords.at(i).first>=width) return false;
     if (theGrid[coords[i].second][coords[i].first]->getInfo().type != BlockType::None) return false;
   }
@@ -343,19 +343,23 @@ void Grid::hint() {
   checkHint();
   int highestY = 0;
   vector<pair<int, int>> coords;
+  int rotState = 0;
   for (int i = 0; i < 10; i++) {
     for (int j = 0; j < 4; j++) {
       int currentY = 0;
       pair<int, int> newLeftBottom = make_pair(i, 4);
       vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
       bool toContinue = false;
-      for (int k = 0; k < c.size(); k++) {
+      for (size_t k = 0; k < c.size(); k++) {
         if(c.at(k).first>=width) {
           toContinue = true;
           break;
         }
       }
-      if (toContinue) continue;
+      if (toContinue) {
+        currentBlock->rotate(true);
+        continue;
+      }
 
       while (true) {
         newLeftBottom.second++;
@@ -366,7 +370,7 @@ void Grid::hint() {
         }
       }
       vector<pair<int, int>> current = currentBlock->getCoordinates(newLeftBottom);
-      for (int k = 0; k < current.size(); k++) {
+      for (size_t k = 0; k < current.size(); k++) {
         currentY += current[k].second;
       }
 
@@ -374,6 +378,7 @@ void Grid::hint() {
         highestY = currentY;
         coords = current;
         hintLeftBottom = newLeftBottom;
+        rotState = currentBlock->getRotationState();
       }
 
       currentBlock->rotate(true); //rotates so it checks next rotation
@@ -381,6 +386,7 @@ void Grid::hint() {
   }
   
   hintBlock = theLevel->makeBlock(currentBlock->getInfo().type, currentBlock->getInfo().level, DisplayFormat::Hint);
+  hintBlock->setRotationState(rotState);
 
   for (size_t i = 0; i < coords.size(); i++) {
     hintBlock->notifyAttachDetach(true, theGrid[coords[i].second][coords[i].first], coords[i]);
