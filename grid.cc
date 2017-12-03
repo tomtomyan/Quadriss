@@ -304,7 +304,9 @@ void Grid::init(LevelType level, bool isRandom, string fileName) {
 }
 
 void Grid::hint() {
+  for (int i = 0; i < 8; i++) {
 
+  }
 }
 
 void Grid::attachObserver(shared_ptr<Observer<Info, State>> ob) {
