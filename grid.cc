@@ -193,7 +193,6 @@ void Grid::counterClockwise(int n) {
   for (int i = 0; i < n; i++) {
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
     vector<pair<int, int>> current = currentBlock->getRotated(false, currentLeftBottom);
-    vector<pair<int, int>> empty;
     detach(old);
     if (checkValid(current)) {
       currentBlock->rotate(false);

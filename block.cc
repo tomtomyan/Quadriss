@@ -32,10 +32,10 @@ vector<pair<int, int>> Block::getRotated(bool clockwise, pair<int, int> leftBott
 
 void Block::rotate(bool clockwise){
   if(clockwise){
-    rotationState = rotationState == 4 ? 0 : rotationState+1;
+    rotationState = rotationState == 3 ? 0 : rotationState+1;
   }
   else{
-    rotationState = rotationState == 0 ? 4 : rotationState-1;
+    rotationState = rotationState == 0 ? 3 : rotationState-1;
   }
 }
 
