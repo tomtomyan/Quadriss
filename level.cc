@@ -27,6 +27,17 @@ string Level::getFileName() {
 	return fileName;
 }
 
+
+void setSeed(int seed) {
+	this->seed = seed;
+}
+
+
+int getSeed() {
+	return seed;
+}
+
+
 shared_ptr<Block> Level::makeBlock(BlockType type, LevelType level, DisplayFormat format){
   shared_ptr<Block> block = nullptr;
   if (type == BlockType::IBlock) {

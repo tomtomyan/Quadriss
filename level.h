@@ -16,6 +16,7 @@ class Block;
 class Level {
 	LevelType level;
 	bool isHeavy;
+	int seed;
 	
 	protected:
 	bool isRandom;
@@ -25,15 +26,16 @@ class Level {
   BlockType inputInterpreter(std::string input);
 
 	public:
-	Level(LevelType, bool, bool, std::string fileName = "");
+	Level(LevelType, bool, bool, int seed, std::string fileName = "");
 	LevelType getLevel();
 	bool getIsHeavy();
 	virtual void setIsRandom(bool) = 0;
 	bool getIsRandom();
 	virtual void setFileName(std::string) = 0;
 	std::string getFileName();
-//	virtual void setFileStream(ifstream &) = 0; // NEW
-	std::ifstream &getFileStream();  // NEW
+	std::ifstream &getFileStream();
+	void setSeed(int seed);
+	int getSeed();
 	virtual std::shared_ptr<Block> generateBlock(BlockType type = BlockType::None) = 0;
 	virtual std::shared_ptr<Block> obstacle(std::pair<int,int> &) = 0;
 };
