@@ -252,6 +252,7 @@ void Grid::drop(int n) {
 
 void Grid::setLevel(LevelType level){
   checkHint();
+  int seed = theLevel->getSeed();
   if (level == LevelType::Level0) {
     theLevel = make_unique<Level0>("sequence.txt"); 
   } else if (level == LevelType::Level1){
@@ -263,6 +264,7 @@ void Grid::setLevel(LevelType level){
   } else if (level == LevelType::Level4) {
     theLevel = make_unique<Level4>();
   }
+  theLevel->setSeed(seed);
 }
 
 void Grid::levelUp(int n) {
