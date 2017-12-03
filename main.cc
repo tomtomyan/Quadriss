@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <algorithm>
 #include "grid.h"
 
 using namespace std;
@@ -9,6 +10,12 @@ int main(int argc, char *argv[]) {
   cin.exceptions(ios::eofbit|ios::failbit);
   string cmd;
   Grid grid;
+  // Vector holds all of the known commands
+  vector<vector<string>> allCmds;
+  for (int i = 0; i < 13; ++i) {  // Remove?
+    vector<string> cmdType;
+    allCmds.emplace_back(cmdType);
+  }
 
   bool textOnly = false;
   string scriptFile = "";
@@ -46,6 +53,66 @@ int main(int argc, char *argv[]) {
       string str[13] = {"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "restart", "hint"};
     while (true) {
       cin >> cmd;
+
+
+        //////////// New feature: Renaming commands //////////////
+      string newCmdName;
+      if (cmd == "rename") {
+         cin >> cmd;
+	 cin >> newCmdName;
+         int index;
+         if (cmd == "left") index  = 0;
+         else if (cmd == "right") index = 1;
+         else if (cmd == "down") index = 2;
+         else if (cmd == "clockwise") index = 3;
+         else if (cmd == "counterclockwise") index = 4;
+         else if (cmd == "drop") index = 5;
+         else if (cmd == "levelup") index = 6;
+         else if (cmd == "leveldown") index = 7;
+         else if (cmd == "norandom") index = 8;
+         else if (cmd == "random") index = 9;
+         else if (cmd == "sequence") index = 10;
+         else if (cmd == "restart") index = 11;
+         else if (cmd == "hint") index = 12;
+         else {
+            cout << "Invalid rename. Try again." << endl;
+            continue;
+         }
+         allCmds.at(index).emplace_back(newCmdName);
+         continue;
+      }
+      // first search if cmd is in allCmds
+      for (unsigned int i = 0; i < allCmds.size(); ++i) {
+         auto s = find(allCmds.at(i).begin(), allCmds.at(i).end(), cmd);
+         if (s != allCmds.at(i).end()) { // found cmd in allCmds
+            if (i == 0) grid.left(1);
+	    else if (i == 1) grid.right(1);
+            else if (i == 2) grid.down(1);
+            else if (i == 3) grid.clockwise(1);
+            else if (i == 4) grid.counterClockwise(1);
+            else if (i == 5) grid.drop(1);
+            else if (i == 6) grid.levelUp(1);
+            else if (i == 7) grid.levelDown(1);
+            else if (i == 8) {
+	      string file;
+              if (cin >> file) {
+                grid.random(false, file);
+              }
+	    }
+            else if (i == 9) grid.random(true);
+            else if (i == 10) {
+              string file;
+              if (cin >> file) {
+                grid.random(false, file);
+              }
+	    }
+            else if (i == 11) {}
+            else { grid.hint(); }
+	    cout << grid;
+         }
+      }
+        //////////////////////////////////////////////////////////
+
 
       // pass in file assuming it is valid
       // handle if file does not exist case in Level and Grid
@@ -87,8 +154,6 @@ int main(int argc, char *argv[]) {
       } else if (newcmd == "norandom") {
         string file;
         if (cin >> file) {
-          ifstream fileStream{file};
-          // create copy ctor for Level 3/4, pass in new fileStream???
           grid.random(false, file);
         }
       } else if (newcmd == "random") {
