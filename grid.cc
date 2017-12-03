@@ -15,7 +15,7 @@ void Grid::attachDetach(vector<pair<int, int>> &o, vector<pair<int, int>> &c) {
   }
   int curSize = c.size();
   for (int i = 0; i < curSize; i++) {
-    cout << "x: " << c[i].first << ", y: " << c[i].second << endl;
+    //cout << "x: " << c[i].first << ", y: " << c[i].second << endl;
     currentBlock->notifyAttachDetach(true, theGrid[c[i].second][c[i].first], c[i]);
   }
 }
@@ -96,7 +96,7 @@ void Grid::placeLowest() {
 bool Grid::checkValid(vector<pair<int, int>> coords) {
   for (int i = 0; i < coords.size(); i++) {
     if(coords.at(i).second<0 || coords.at(i).second>=height || coords.at(i).first<0 || coords.at(i).first>=width) return false;
-    cout << "checking x: " << coords[i].first << ", y: " << coords[i].second << endl;
+    //cout << "checking x: " << coords[i].first << ", y: " << coords[i].second << endl;
     if (theGrid[coords[i].second][coords[i].first]->getInfo().type != BlockType::None) return false;
   }
   return true;
