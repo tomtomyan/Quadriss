@@ -26,6 +26,7 @@ class Grid {
   std::shared_ptr<Block> hintBlock;
   std::vector<std::shared_ptr<Observer<Info, State>>> ob;
   std::pair<int, int> currentLeftBottom;
+  std::pair<int, int> hintLeftBottom;
 
   const int width = 11;
   const int height = 15;
@@ -33,6 +34,7 @@ class Grid {
   int score = 0;
   int highScore = 100;
   
+  void checkHint();
   void setLevel(LevelType level);
   void checkRows();
   void placeLowest();

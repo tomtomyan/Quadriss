@@ -9,7 +9,13 @@ Grid::~Grid() {
 }
 
 void Grid::checkHint() {
-
+  if (hintBlock) {
+      vector<pair<int, int>> v = hintBlock->getCoordinates(hintLeftBottom);
+    for (size_t i = 0; i < v.size(); i++) {
+      hintBlock->notifyAttachDetach(false, theGrid[v[i].second][v[i].first], v[i]);
+    }
+    hintBlock = nullptr;
+  }
 }
 
 GameState Grid::getGameState() const{
@@ -142,6 +148,7 @@ void Grid::addScore(bool isLine, LevelType level, int numLines) {
 }
 
 void Grid::left(int n) {
+  checkHint();
   for (int i = 0; i < n; i++) {
     pair<int, int> newLeftBottom = make_pair(currentLeftBottom.first-1, currentLeftBottom.second);
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
@@ -158,6 +165,7 @@ void Grid::left(int n) {
 }
 
 void Grid::right(int n) {
+  checkHint();
   for (int i = 0; i < n; i++) {
     pair<int, int> newLeftBottom = make_pair(currentLeftBottom.first+1, currentLeftBottom.second);
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
@@ -174,6 +182,7 @@ void Grid::right(int n) {
 }
 
 void Grid::down(int n) {
+  checkHint();
   for (int i = 0; i < n; i++) {
     pair<int, int> newLeftBottom = make_pair(currentLeftBottom.first, currentLeftBottom.second+1);
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
@@ -190,6 +199,7 @@ void Grid::down(int n) {
 }
 
 void Grid::clockwise(int n) {
+  checkHint();
   for (int i = 0; i < n; i++) {
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
     vector<pair<int, int>> current = currentBlock->getRotated(true, currentLeftBottom);
@@ -205,6 +215,7 @@ void Grid::clockwise(int n) {
 }
 
 void Grid::counterClockwise(int n) {
+  checkHint();
   for (int i = 0; i < n; i++) {
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
     vector<pair<int, int>> current = currentBlock->getRotated(false, currentLeftBottom);
@@ -220,6 +231,7 @@ void Grid::counterClockwise(int n) {
 }
 
 void Grid::drop(int n) {
+  checkHint();
   placeLowest();
   checkRows();
   shared_ptr<Block> o = theLevel->obstacle(currentLeftBottom);//change this
@@ -239,6 +251,7 @@ void Grid::drop(int n) {
 }
 
 void Grid::setLevel(LevelType level){
+  checkHint();
   if (level == LevelType::Level0) {
     theLevel = make_unique<Level0>("sequence.txt"); 
   } else if (level == LevelType::Level1){
@@ -253,6 +266,7 @@ void Grid::setLevel(LevelType level){
 }
 
 void Grid::levelUp(int n) {
+  checkHint();
   LevelType level = LevelType::None;
   if (theLevel->getLevel() == LevelType::Level0) {
     level = LevelType::Level1;
@@ -267,6 +281,7 @@ void Grid::levelUp(int n) {
 }
 
 void Grid::levelDown(int n) {
+  checkHint();
   LevelType level = LevelType::None;
   if (theLevel->getLevel() == LevelType::Level0) {
     level = LevelType::Level4;
@@ -281,6 +296,7 @@ void Grid::levelDown(int n) {
 }
 
 void Grid::random(bool isRandom, string fileName) {
+  checkHint();
   theLevel->setIsRandom(isRandom);
   if(!isRandom) theLevel->setFileName(fileName);
 }
@@ -324,15 +340,26 @@ void Grid::init(LevelType level, bool isRandom, string fileName) {
 }
 
 void Grid::hint() {
+  checkHint();
   int highestY = 0;
   vector<pair<int, int>> coords;
-  for (int i = 0; i < 8; i++) {
+  for (int i = 0; i < 10; i++) {
     for (int j = 0; j < 4; j++) {
       int currentY = 0;
-      pair<int, int> newLeftBottom = make_pair(i, 3);
+      pair<int, int> newLeftBottom = make_pair(i, 4);
+      vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
+      bool toContinue = false;
+      for (int k = 0; k < c.size(); k++) {
+        if(c.at(k).first>=width) {
+          toContinue = true;
+          break;
+        }
+      }
+      if (toContinue) continue;
+
       while (true) {
         newLeftBottom.second++;
-        vector<pair<int, int>> c = currentBlock->getCoordinates(newLeftBottom);
+        c = currentBlock->getCoordinates(newLeftBottom);
         if (!checkValid(c)) {
           newLeftBottom.second--;
           break;
@@ -346,6 +373,7 @@ void Grid::hint() {
       if (currentY > highestY) {
         highestY = currentY;
         coords = current;
+        hintLeftBottom = newLeftBottom;
       }
 
       currentBlock->rotate(true); //rotates so it checks next rotation
