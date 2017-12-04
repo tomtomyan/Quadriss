@@ -73,6 +73,37 @@ int GraphicsDisplay::colourDefinition(BlockType type, DisplayFormat format) cons
   return colour;
 }
 
+void GraphicsDisplay::clearRows(){
+  // We need to sort the list of deleted row. This way, we can delete the top
+  // rows first and not shift the positions of the rows below it.
+  vector<int> sortedDeleted;
+  while(rowsDeleted.size() > 0){
+    int lenRD = rowsDeleted.size();
+    int min = rowsDeleted.at(0);
+    int posMin = 0;
+    for(int i=1; i<lenRD; i++){
+      int cur = rowsDeleted.at(i);
+      if(cur<min){
+        min = cur;
+	      posMin = i;
+      }
+    }
+    sortedDeleted.emplace_back(min);
+    rowsDeleted.erase(rowsDeleted.begin()+posMin);
+  }
+  // Delete rows and add new ones on
+  int numDeleted = sortedDeleted.size();
+  for(int i=0; i<numDeleted; i++){
+    grid.erase(grid.begin()+sortedDeleted.at(i));
+    vector<pair<bool, int>> row;
+    for(int j=0; j<gridWidth; j++){
+      row.emplace_back(make_pair(false, blankColour));
+    }
+    grid.insert(grid.begin(), row);
+  }
+  rowsDelete.clear();
+}
+
 void GraphicsDisplay::redraw(GameState gameState){
   if(gameState.gameOver){
     drawGameOver();
@@ -84,6 +115,8 @@ void GraphicsDisplay::redraw(GameState gameState){
     drawInitial();
     this->gameOver = false;
   }
+
+  print();
   // Draws text at top
   xw.fillRectangle(0, 0, cellSize*gridWidth, (cellSize*2)+(cellSize/2), blankColour);
   ostringstream levelStr;
@@ -142,14 +175,10 @@ void GraphicsDisplay::notify(shared_ptr<Subject<Info, State>> whoNotified) {
       }
     }
     if(deleteRow){
+      cout << "(" << coords.first << ", " << coords.second << ")" << endl;
       needShift = true;
       maxRowShift = coords.second+1 > maxRowShift ? coords.second+1 : maxRowShift;
-      grid.erase(grid.begin()+coords.second);
-      vector<pair<bool, int>> row;
-      for(int i=0; i<gridWidth; i++){
-        row.emplace_back(make_pair(false, blankColour));
-      }
-      grid.insert(grid.begin(), row);
+      rowsDeleted.emplace_back(coords.second);
     }
   }
   else{

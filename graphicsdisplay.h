@@ -20,6 +20,7 @@ class GraphicsDisplay: public Observer<Info, State> {
 
   std::vector<std::vector<std::pair<bool,int>>> grid;
   std::vector<std::pair<std::pair<int, int>, int>> queue;
+  std::vector<int> rowsDeleted;
   bool needShift;
   int maxRowShift;
   bool gameOver = false;
@@ -29,6 +30,7 @@ class GraphicsDisplay: public Observer<Info, State> {
   void drawGameOver();
   void drawInitial();
   void print();
+  void clearRows();
 
  public:
   GraphicsDisplay(int gridSize, int winSize);
