@@ -25,6 +25,7 @@ class Level {
   BlockType inputInterpreter(std::string input);
 
 	public:
+  virtual ~Level();
 	Level(LevelType, bool, bool, std::string fileName = "");
 	LevelType getLevel();
 	bool getIsHeavy();

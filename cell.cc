@@ -3,6 +3,14 @@
 #include "cell.h"
 using namespace std;
 
+Cell::~Cell() {
+  //block = nullptr;
+}
+
+shared_ptr<Block> Cell::getBlock() {
+  return block;
+}
+
 shared_ptr<Subject<Info, State>> Cell::getThisSubjectPtr(){
   shared_ptr<Cell> cell = shared_from_this();
   return dynamic_pointer_cast<Subject<Info, State>>(cell);

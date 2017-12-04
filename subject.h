@@ -17,8 +17,10 @@ template <typename InfoType, typename StateType> class Subject {
    virtual InfoType getInfo() const = 0;
    virtual std::shared_ptr<Subject<InfoType, StateType>> getThisSubjectPtr() = 0;
    StateType getState() const;
-//   virtual ~Subject<InfoType, StateType>() = 0;
+   //virtual ~Subject<InfoType, StateType>() = 0;
 };
+
+
 
 template <typename InfoType, typename StateType>
 void Subject<InfoType, StateType>::attach(std::shared_ptr<Observer<InfoType, StateType>> o){
@@ -48,8 +50,11 @@ template <typename InfoType, typename StateType>
 StateType Subject<InfoType, StateType>::getState() const{
   return state;
 }
+
 /*
 template <typename InfoType, typename StateType>
-Subject<InfoType, StateType>::~Subject<InfoType, StateType>(){};
+Subject<InfoType, StateType>::~Subject<InfoType, StateType>(){
+  observers.clear();
+};
 */
 #endif

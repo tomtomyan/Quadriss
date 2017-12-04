@@ -7,6 +7,7 @@ using namespace std;
 Level::Level(LevelType level, bool isHeavy, bool isRandom, string fileName):
 	level{level}, isHeavy{isHeavy}, isRandom{isRandom}, fileName{fileName} {}
 
+Level::~Level() {}
 
 LevelType Level::getLevel() {
 	return level;

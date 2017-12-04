@@ -1,10 +1,17 @@
-#include "iostream"
+#include <iostream>
 
 #include "grid.h"
 
 using namespace std;
 
 Grid::~Grid() {
+  for (int i = 0; i < 15; i++) {
+    for (int j = 0; j < 11; j++) {
+      if (theGrid[i][j]->getBlock()) {
+        theGrid[i][j]->getBlock()->notifyAttachDetach(false, theGrid[i][j], make_pair(j, i));
+      }
+    }
+  }
   theGrid.clear();
 }
 
@@ -385,6 +392,15 @@ void Grid::setBlock(BlockType type) {
 }
 
 void Grid::init(LevelType level, int seed, bool isRandom, string fileName) {
+  if (theGrid.size()) {
+    for (int i = 0; i < 15; i++) {
+      for (int j = 0; j < 11; j++) {
+        if (theGrid[i][j]->getBlock()) {
+          theGrid[i][j]->getBlock()->notifyAttachDetach(false, theGrid[i][j], make_pair(j, i));
+        }
+      }
+    }
+  }
   theGrid.clear();
   for (int y = 0; y < height; y++) {
     vector<shared_ptr<Cell>> row;
