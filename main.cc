@@ -11,8 +11,7 @@ int main(int argc, char *argv[]) {
   cin.exceptions(ios::eofbit|ios::failbit);
   string cmd;
   Grid grid;
-  shared_ptr<GraphicsDisplay> graphDis = make_shared<GraphicsDisplay>(380, 700);
-  grid.attachObserver(graphDis);
+  shared_ptr<GraphicsDisplay> graphDis; 
   // Vector holds all of the known commands
   vector<vector<string>> allCmds;
   for (int i = 0; i < 13; ++i) {  // Remove?
@@ -59,6 +58,13 @@ int main(int argc, char *argv[]) {
       }
     }
   }
+
+  if (!textOnly) {
+    graphDis = make_shared<GraphicsDisplay>(380, 700);
+    grid.attachObserver(graphDis);
+  }
+
+
   if (startLevel == "0") {
     grid.init(LevelType::Level0, seed, false, scriptFile);
   } else if (startLevel == "1") {
@@ -73,84 +79,92 @@ int main(int argc, char *argv[]) {
     grid.init(LevelType::Level0, seed, false, scriptFile);
   }
   cout << grid << endl;
-  graphDis->redraw(grid.getGameState());
+  if (!textOnly) graphDis->redraw(grid.getGameState());
 
   //COMMAND INTERPRETER
   try {
       string str[13] = {"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "restart", "hint"};
     while (true) {
       if (isSequence && seqFirstTime) {
-	seqFirstTime = false;
-	fileStream = ifstream{fileName};
-	if (!(fileStream >> cmd)) {
-	  isSequence = false;
-	  cout << grid;
-    graphDis->redraw(grid.getGameState());
-	  cout << "End of sequence file. Start providing input." << endl;
-	  continue;
-	}
+        seqFirstTime = false;
+        fileStream = ifstream{fileName};
+        if (!(fileStream >> cmd)) {
+          isSequence = false;
+          cout << grid;
+          if (!textOnly) graphDis->redraw(grid.getGameState());
+          cout << "End of sequence file. Start providing input." << endl;
+          continue;
+        }
       }
       else if (isSequence) {
-	if (!(fileStream >> cmd)) {
-	  isSequence = false;
-	  cout << grid;
-    graphDis->redraw(grid.getGameState());
+        if (!(fileStream >> cmd)) {
+          isSequence = false;
+          cout << grid;
+          if (!textOnly)
+          graphDis->redraw(grid.getGameState());
           cout << "End of sequence file. Start providing input." << endl;
-	  continue;
-	}
+          continue;
+        }
       }
       else {
         cin >> cmd;
       }
 
       if (cmd == "I") {
-	grid.setBlock(BlockType::IBlock);
-	cout << grid;
-  graphDis->redraw(grid.getGameState());
-	continue;
+        grid.setBlock(BlockType::IBlock);
+        cout << grid;
+        if (!textOnly)
+        graphDis->redraw(grid.getGameState());
+        continue;
       }
       else if (cmd == "J") {
-	grid.setBlock(BlockType::JBlock);
-	cout << grid;
-  graphDis->redraw(grid.getGameState());
-	continue;
+        grid.setBlock(BlockType::JBlock);
+        cout << grid;
+        if (!textOnly)
+        graphDis->redraw(grid.getGameState());
+        continue;
       }
       else if (cmd == "L") {
-	grid.setBlock(BlockType::LBlock);
-	cout << grid;
-  graphDis->redraw(grid.getGameState());
-	continue;
+        grid.setBlock(BlockType::LBlock);
+        cout << grid;
+        if (!textOnly)
+        graphDis->redraw(grid.getGameState());
+        continue;
       }
       else if (cmd == "O") {
         grid.setBlock(BlockType::OBlock);
-	cout << grid;
-  graphDis->redraw(grid.getGameState());
-	continue;
+        cout << grid;
+        if (!textOnly)
+        graphDis->redraw(grid.getGameState());
+        continue;
       }
       else if (cmd == "S") {
         grid.setBlock(BlockType::SBlock);
-	cout << grid;
-  graphDis->redraw(grid.getGameState());
-	continue;
+        cout << grid;
+        if (!textOnly)
+        graphDis->redraw(grid.getGameState());
+        continue;
       }
       else if (cmd == "Z") {
         grid.setBlock(BlockType::ZBlock);
-	cout << grid;
-  graphDis->redraw(grid.getGameState());
-	continue;
+        cout << grid;
+        if (!textOnly)
+        graphDis->redraw(grid.getGameState());
+        continue;
       }
       else if (cmd == "T") {
         grid.setBlock(BlockType::TBlock);
-	cout << grid;
-  graphDis->redraw(grid.getGameState());
-	continue;
+        cout << grid;
+        if (!textOnly)
+        graphDis->redraw(grid.getGameState());
+        continue;
       }
       
       //////////// New feature: Renaming commands //////////////
       string newCmdName;
       if (cmd == "rename") {
          cin >> cmd;
-	 cin >> newCmdName;
+         cin >> newCmdName;
          int index;
          if (cmd == "left") index  = 0;
          else if (cmd == "right") index = 1;
@@ -170,8 +184,9 @@ int main(int argc, char *argv[]) {
             continue;
          }
          allCmds.at(index).emplace_back(newCmdName);
-	 cout << grid;
-   graphDis->redraw(grid.getGameState());
+         cout << grid;
+         if (!textOnly)
+         graphDis->redraw(grid.getGameState());
          continue;
       }
       // first search if cmd is in allCmds
@@ -179,7 +194,7 @@ int main(int argc, char *argv[]) {
          auto s = find(allCmds.at(i).begin(), allCmds.at(i).end(), cmd);
          if (s != allCmds.at(i).end()) { // found cmd in allCmds
             if (i == 0) grid.left(1);
-	    else if (i == 1) grid.right(1);
+            else if (i == 1) grid.right(1);
             else if (i == 2) grid.down(1);
             else if (i == 3) grid.clockwise(1);
             else if (i == 4) grid.counterClockwise(1);
@@ -187,23 +202,24 @@ int main(int argc, char *argv[]) {
             else if (i == 6) grid.levelUp(1);
             else if (i == 7) grid.levelDown(1);
             else if (i == 8) {
-	      string file;
+              string file;
               if (cin >> file) {
                 grid.random(false, file);
               }
-	    }
+            }
             else if (i == 9) grid.random(true);
             else if (i == 10) {
               string file;
               if (cin >> file) {
                 grid.random(false, file);
               }
-	    }
+            }
             else if (i == 11) {}
             else { grid.hint(); }
-	    cout << grid;
-      graphDis->redraw(grid.getGameState());
-         }
+              cout << grid;
+        if (!textOnly)
+              graphDis->redraw(grid.getGameState());
+            }
       }
       //////////////////////////////////////////////////////////
 
@@ -264,6 +280,7 @@ int main(int argc, char *argv[]) {
       }
 
       cout << grid;
+        if (!textOnly)
       graphDis->redraw(grid.getGameState());
     }
   } catch (ios::failure &) {}
