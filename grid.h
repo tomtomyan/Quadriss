@@ -42,12 +42,12 @@ class Grid {
   bool checkValid(std::vector<std::pair<int, int>> coordinates);
   void attach(std::vector<std::pair<int, int>> &v, bool initial = false);
   void detach(std::vector<std::pair<int, int>> &v);
+  void addScore(bool isLine, LevelType level, int numLines);
 
   public:
   ~Grid();
 
   GameState getGameState() const;
-  void addScore(bool isLine, LevelType level, int numLines);
   void left(int);
   void right(int);
   void down(int n, bool heavy = false);
