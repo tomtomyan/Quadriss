@@ -31,6 +31,8 @@ class GraphicsDisplay: public Observer<Info, State> {
   void drawInitial();
   void print();
   void clearRows();
+  void drawGuideLines();
+  void emptyQueue();
 
  public:
   GraphicsDisplay(int gridSize, int winSize);

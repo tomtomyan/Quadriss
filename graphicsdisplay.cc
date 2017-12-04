@@ -104,6 +104,17 @@ void GraphicsDisplay::clearRows(){
   rowsDeleted.clear();
 }
 
+void GraphicsDisplay::emptyQueue(){
+ vector<pair<pair<int, int>, int>> finalQueue;
+ int numQueue = queue.size();
+  for(int i=0; i<numQueue; i++){
+    pair<pair<int, int>, int> change = queue.at(i);
+    if(needShift && change.first.second <= maxRowShift) continue;
+    xw.fillRectangle(gridXShift+(cellSize*change.first.first), gridYShift+(cellSize*change.first.second), cellSize, cellSize, change.second);
+  }
+  queue.clear();
+}
+
 void GraphicsDisplay::redraw(GameState gameState){
   if(gameState.gameOver){
     drawGameOver();
@@ -114,7 +125,7 @@ void GraphicsDisplay::redraw(GameState gameState){
 
 //  print();
   // Draws text at top
-  xw.fillRectangle(0, 0, cellSize*gridWidth, (cellSize*2)+(cellSize/2), blankColour);
+  xw.fillRectangle(0, 0, cellSize*gridWidth, cellSize*3, blankColour);
   ostringstream levelStr;
   levelStr << gameState.level;
   xw.drawString(gridXShift, cellSize, levelStr.str());
@@ -153,6 +164,7 @@ void GraphicsDisplay::redraw(GameState gameState){
     pair<int, int> cur = gameState.nextBlockCoords.at(i);
     xw.fillRectangle(gridXShift+(cellSize*cur.first), gridYShift+(cellSize*(gridHeight+cur.second)), cellSize, cellSize,col);
   }
+//  drawGuideLines();
 }
 
 void GraphicsDisplay::notify(shared_ptr<Subject<Info, State>> whoNotified) {
@@ -186,6 +198,15 @@ void GraphicsDisplay::notify(shared_ptr<Subject<Info, State>> whoNotified) {
     }
     grid.at(coords.second).at(coords.first) = make_pair(false, colour);
     queue.emplace_back(make_pair(coords, colour));
+  }
+}
+
+void GraphicsDisplay::drawGuideLines(){
+  for(int y = 0; y<winHeight; y+=20){
+    xw.fillRectangle(0, y, winWidth, 1, Xwindow::Red);
+  }
+  for(int x = 0; x<winWidth; x+=20){
+    xw.fillRectangle(x, 0, 1, winHeight, Xwindow::Red);
   }
 }
 
