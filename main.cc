@@ -3,6 +3,7 @@
 #include <sstream>
 #include <algorithm>
 #include "grid.h"
+#include "graphicsdisplay.h"
 using namespace std;
 
 
@@ -10,6 +11,8 @@ int main(int argc, char *argv[]) {
   cin.exceptions(ios::eofbit|ios::failbit);
   string cmd;
   Grid grid;
+  shared_ptr<GraphicsDisplay> graphDis = make_shared<GraphicsDisplay>(380, 700);
+  grid.attachObserver(graphDis);
   // Vector holds all of the known commands
   vector<vector<string>> allCmds;
   for (int i = 0; i < 13; ++i) {  // Remove?
@@ -24,7 +27,7 @@ int main(int argc, char *argv[]) {
   bool seqFirstTime = true;
   string fileName;  // if isSequence is true, read commands from this file
   ifstream fileStream;
-  int seed = 1;
+  int seed = 123;
 
   //COMMAD LINE ARGUMENTS
   for (int i = 1; i < argc; i++) {
@@ -70,6 +73,7 @@ int main(int argc, char *argv[]) {
     grid.init(LevelType::Level0, seed, false, scriptFile);
   }
   cout << grid << endl;
+  graphDis->redraw(grid.getGameState());
 
   //COMMAND INTERPRETER
   try {
@@ -81,6 +85,7 @@ int main(int argc, char *argv[]) {
 	if (!(fileStream >> cmd)) {
 	  isSequence = false;
 	  cout << grid;
+    graphDis->redraw(grid.getGameState());
 	  cout << "End of sequence file. Start providing input." << endl;
 	  continue;
 	}
@@ -89,6 +94,7 @@ int main(int argc, char *argv[]) {
 	if (!(fileStream >> cmd)) {
 	  isSequence = false;
 	  cout << grid;
+    graphDis->redraw(grid.getGameState());
           cout << "End of sequence file. Start providing input." << endl;
 	  continue;
 	}
@@ -100,36 +106,43 @@ int main(int argc, char *argv[]) {
       if (cmd == "I") {
 	grid.setBlock(BlockType::IBlock);
 	cout << grid;
+  graphDis->redraw(grid.getGameState());
 	continue;
       }
       else if (cmd == "J") {
 	grid.setBlock(BlockType::JBlock);
 	cout << grid;
+  graphDis->redraw(grid.getGameState());
 	continue;
       }
       else if (cmd == "L") {
 	grid.setBlock(BlockType::LBlock);
 	cout << grid;
+  graphDis->redraw(grid.getGameState());
 	continue;
       }
       else if (cmd == "O") {
         grid.setBlock(BlockType::OBlock);
 	cout << grid;
+  graphDis->redraw(grid.getGameState());
 	continue;
       }
       else if (cmd == "S") {
         grid.setBlock(BlockType::SBlock);
 	cout << grid;
+  graphDis->redraw(grid.getGameState());
 	continue;
       }
       else if (cmd == "Z") {
         grid.setBlock(BlockType::ZBlock);
 	cout << grid;
+  graphDis->redraw(grid.getGameState());
 	continue;
       }
       else if (cmd == "T") {
         grid.setBlock(BlockType::TBlock);
 	cout << grid;
+  graphDis->redraw(grid.getGameState());
 	continue;
       }
       
@@ -158,6 +171,7 @@ int main(int argc, char *argv[]) {
          }
          allCmds.at(index).emplace_back(newCmdName);
 	 cout << grid;
+   graphDis->redraw(grid.getGameState());
          continue;
       }
       // first search if cmd is in allCmds
@@ -188,6 +202,7 @@ int main(int argc, char *argv[]) {
             else if (i == 11) {}
             else { grid.hint(); }
 	    cout << grid;
+      graphDis->redraw(grid.getGameState());
          }
       }
       //////////////////////////////////////////////////////////
@@ -249,6 +264,7 @@ int main(int argc, char *argv[]) {
       }
 
       cout << grid;
+      graphDis->redraw(grid.getGameState());
     }
   } catch (ios::failure &) {}
 

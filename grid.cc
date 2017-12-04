@@ -81,13 +81,18 @@ void Grid::checkRows() {
     sortedDeleted.emplace_back(min);
     rowsDeleted.erase(rowsDeleted.begin()+posMin);
   }
-  
+  // Delete rows and add new ones on
   int numDeleted = sortedDeleted.size();
   for(int i=0; i<numDeleted; i++){
     theGrid.erase(theGrid.begin()+(sortedDeleted.at(i)));
     vector<shared_ptr<Cell>> row;
     for(int j=0; j<width; j++){
-      row.emplace_back(make_shared<Cell>());
+      shared_ptr<Cell> cell = make_shared<Cell>();
+      int obSize = ob.size();
+      for(int k=0; k<obSize; k++){
+        cell->attach(ob.at(k));
+      }
+      row.emplace_back(cell);
     }
     theGrid.insert(theGrid.begin(), row);
   }
