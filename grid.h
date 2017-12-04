@@ -32,8 +32,11 @@ class Grid {
   const int height = 15;
 
   int score = 0;
+  int player2Score = 0;
   int highScore = 100;
   bool gameOver = false;
+  bool twoPlayer = false;
+  bool isMainPlayer = true;
 
   void checkHint();
   void setLevel(LevelType level, int seed = 1, std::string fileName = "");
@@ -58,7 +61,7 @@ class Grid {
   void levelDown(int, std::string fileName = "sequence.txt");
   void random(bool isRandom, std::string fileName = "");
   void setBlock(BlockType type);
-  void init(LevelType level, int seed, std::string fileName = "");
+  void init(LevelType level, int seed, std::string fileName = "", bool twoPlayer = false);
   void hint();
   void attachObserver(std::shared_ptr<Observer<Info, State>> ob);
   void detachObserver(std::shared_ptr<Observer<Info, State>> ob);

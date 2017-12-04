@@ -26,13 +26,15 @@ class GraphicsDisplay: public Observer<Info, State> {
 
   bool gameOver = false;
   int playerScore = 0;
+  int player2Score = 0;
   int highScore = 0;
   LevelType level;
   BlockType nextBlock;
+  bool isMainPlayer = true;
 
   int colourDefinition(BlockType type, DisplayFormat format) const;
   void createGrid();
-  void drawGameOver();
+  void drawGameOver(bool twoPlayer);
   void drawInitial();
   void print();
   void clearRows();

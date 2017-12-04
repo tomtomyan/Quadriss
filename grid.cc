@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 
 #include "grid.h"
 
@@ -33,6 +34,9 @@ GameState Grid::getGameState() const{
   gs.highScore = highScore;
   gs.nextBlock = nextBlock->getInfo().type;
   gs.nextBlockCoords = nextBlock->getCoordinates(make_pair(0, 3));
+  gs.twoPlayer = twoPlayer;
+  gs.player2Score = player2Score;
+  gs.isMainPlayer = isMainPlayer;
   return gs;
 }
 
@@ -163,15 +167,17 @@ void Grid::addScore(bool isLine, LevelType level, int numLines) {
     levelScore = 4;
   }
 
+  int plus = 0;
   if(isLine){
     int base = levelScore + numLines;
-    score += (base * base);
+    plus = (base * base);
   }
   else{
     int base = levelScore + 1;
-    score += (base * base);
+    plus = (base * base);
   }
-
+  if(twoPlayer && !isMainPlayer) player2Score+=plus;
+  else score+=plus;
   if (score > highScore) highScore = score;
 }
 
@@ -264,6 +270,7 @@ void Grid::counterClockwise(int n) {
 }
 
 void Grid::drop(int n) {
+  if(twoPlayer && n!=0) n=1;
   for (int i = 0; i < n; i++) {
     if (gameOver) return;
     checkHint();
@@ -271,7 +278,6 @@ void Grid::drop(int n) {
     checkRows();
     shared_ptr<Block> o = theLevel->obstacle(currentLeftBottom);//change this
     if (o) {
-      cout << "obstacle found" << endl;
       currentBlock = o;
       placeLowest();
       checkRows();
@@ -287,7 +293,14 @@ void Grid::drop(int n) {
     } else {
       gameOver = true;
       cout << "GAME OVER" << endl;
+      if(twoPlayer){
+        if(score > player2Score) cout << "Player 1 won!" << endl;
+        else if(player2Score > score) cout << "Player 2 won!" << endl;
+        else cout << "It's a TIE!" << endl;
+      }
     }
+
+    if(twoPlayer)  isMainPlayer = !isMainPlayer;
   }
 }
 
@@ -391,7 +404,7 @@ void Grid::setBlock(BlockType type) {
   attach(cur);
 }
 
-void Grid::init(LevelType level, int seed, string fileName) {
+void Grid::init(LevelType level, int seed, string fileName, bool twoPlayer) {
   if (theGrid.size()) {
     for (int i = 0; i < 15; i++) {
       for (int j = 0; j < 11; j++) {
@@ -402,7 +415,9 @@ void Grid::init(LevelType level, int seed, string fileName) {
     }
   }
   score = 0;
+  player2Score = 0;
   gameOver = false;
+  this->twoPlayer = twoPlayer;
   theGrid.clear();
   for (int y = 0; y < height; y++) {
     vector<shared_ptr<Cell>> row;
@@ -508,8 +523,14 @@ std::ostream &operator<<(std::ostream &out, const Grid &g) {
     out << 4;
   }
   out << endl;
-  out << "Score:      " << g.score << endl;
-  out << "Hi Score: " << g.highScore << endl;
+  if(g.twoPlayer){
+    out << "Player 1: " << setw(3) << g.score << setw(0) << endl;
+    out << "Player 2: " << setw(3) << g.player2Score << setw(0) << endl;
+  }
+  else{
+    out << "Score:    " << setw(3) << g.score << setw(0) << endl;
+    out << "Hi Score: " << setw(3) << g.highScore << setw(0) << endl;
+  }
   out << "-----------" << endl;
   for (int i = 0; i < 15; i++) {
     for (int j = 0; j < 11; j++) {
@@ -556,6 +577,11 @@ std::ostream &operator<<(std::ostream &out, const Grid &g) {
     out << "TTT" << endl << " T" << endl;
   }
   
+  if(g.twoPlayer){
+    if(g.isMainPlayer) out << "Player 1's turn." << endl;
+    else out << "Player 2's turn." << endl;
+  }
+
   return out;
 }
 

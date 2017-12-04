@@ -37,9 +37,16 @@ void GraphicsDisplay::drawInitial(){
   playerScore = -1; //to make sure the top part redraws upon a new game
 }
 
-void GraphicsDisplay::drawGameOver(){
+void GraphicsDisplay::drawGameOver(bool twoPlayer){
   xw.fillRectangle(0, 0, winWidth, winHeight, Xwindow::Black); //fills background
-  xw.drawString((winWidth/2)-20, winHeight/2, "Game Over", Xwindow::Red);
+  xw.drawString((winWidth/2)-25, winHeight/2, "Game Over", Xwindow::Red);
+  if(twoPlayer){
+    string winner;
+    if(playerScore > player2Score) winner = "Player 1 won!";
+    else if(player2Score > playerScore) winner = "Player 2 won!";
+    else winner = "It's a TIE!";
+    xw.drawString((winWidth/2)-35, (winHeight/2)+20, winner, Xwindow::Red);
+  }
 }
 
 //  enum {White=0, Black, Red, Green, Blue, Cyan, Yellow, Magenta, Orange, Brown}; // Available colours.
@@ -138,7 +145,7 @@ void GraphicsDisplay::emptyQueue(){
 
 void GraphicsDisplay::redraw(GameState gameState){
   if(gameState.gameOver){
-    drawGameOver();
+    drawGameOver(gameState.twoPlayer);
     this->gameOver = true;
     createGrid();
     return;
@@ -146,20 +153,32 @@ void GraphicsDisplay::redraw(GameState gameState){
 
 //  print();
   // Draws text at top
-  if(level!=gameState.level || playerScore!=gameState.playScore || highScore!=gameState.highScore){
+  if(level!=gameState.level || playerScore!=gameState.playScore || player2Score!=gameState.player2Score || highScore!=gameState.highScore || isMainPlayer!=gameState.isMainPlayer){
     level = gameState.level;
     playerScore = gameState.playScore;
+    player2Score = gameState.player2Score;
     highScore = gameState.highScore;
+    isMainPlayer = gameState.isMainPlayer;
     xw.fillRectangle(0, 0, cellSize*gridWidth, cellSize*3, blankColour);
     ostringstream levelStr;
     levelStr << gameState.level;
     xw.drawString(gridXShift, cellSize, levelStr.str());
     ostringstream scoreStr;
-    scoreStr << "Score: " << setw(15)  << gameState.playScore;
-    xw.drawString(gridXShift, cellSize*2, scoreStr.str());
+    int scoreCol = Xwindow::Black;
     ostringstream hiScoreStr;
-    hiScoreStr << "High Score: " << setw(10)  << gameState.highScore;
-    xw.drawString(gridXShift, cellSize*3, hiScoreStr.str());
+    int highCol = Xwindow::Black;
+    if(gameState.twoPlayer){
+      scoreStr << "Player 1: " << setw(5)  << gameState.playScore;
+      hiScoreStr << "Player 2: " << setw(5)  << gameState.player2Score;
+      if(gameState.isMainPlayer) scoreCol = Xwindow::Red;
+      else highCol = Xwindow::Red;
+    }
+    else{
+      scoreStr << "Score: " << setw(15)  << gameState.playScore;
+      hiScoreStr << "High Score: " << setw(10)  << gameState.highScore;
+    }
+    xw.drawString(gridXShift, cellSize*2, scoreStr.str(), scoreCol);
+    xw.drawString(gridXShift, cellSize*3, hiScoreStr.str(), highCol);
   }
   // Draws grid
   emptyQueue();
@@ -206,7 +225,6 @@ void GraphicsDisplay::notify(shared_ptr<Subject<Info, State>> whoNotified) {
       }
     }
     if(deleteRow){
-      cout << "(" << coords.first << ", " << coords.second << ")" << endl;
       needShift = true;
       maxRowShift = coords.second+1 > maxRowShift ? coords.second+1 : maxRowShift;
       rowsDeleted.emplace_back(coords.second);

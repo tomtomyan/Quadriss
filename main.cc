@@ -51,7 +51,7 @@ bool isValidName(vector<pair<Command, vector<string>>> &allCmds, string newCmd){
   return isValid;
 }
 
-void commandLineInterpreter(int argc, char *argv[], bool &textOnly, string &scriptFile, LevelType &startLevel, int &seed){
+void commandLineInterpreter(int argc, char *argv[], bool &textOnly, string &scriptFile, LevelType &startLevel, int &seed, bool &twoPlayer){
   //COMMAD LINE ARGUMENTS
   string startLevelStr = "0";
   for (int i = 1; i < argc; i++) {
@@ -81,6 +81,10 @@ void commandLineInterpreter(int argc, char *argv[], bool &textOnly, string &scri
         cout << "Start level set to " << startLevelStr << endl;
         ++i;
       }
+    } else if (argv[i] == string("-twoplayer")){
+        twoPlayer = true;
+        cout << "Two player mode" << endl;
+        ++i;
     }
   }
 
@@ -136,13 +140,14 @@ int main(int argc, char *argv[]) {
   string scriptFile = "sequence.txt";
   LevelType startLevel; //the actual level used later on
   int seed = 1;
-  commandLineInterpreter(argc, argv, textOnly, scriptFile, startLevel, seed);
+  bool twoPlayer = false;
+  commandLineInterpreter(argc, argv, textOnly, scriptFile, startLevel, seed, twoPlayer);
   if (!textOnly) {
     graphDis = make_shared<GraphicsDisplay>(380, 700);
     grid.attachObserver(graphDis);
   }
-  grid.init(startLevel, seed, scriptFile);
-  cout << grid << endl;
+  grid.init(startLevel, seed, scriptFile, twoPlayer);
+  cout << grid;
   if (!textOnly) graphDis->redraw(grid.getGameState());
   
   //COMMAND INTERPRETER
@@ -206,7 +211,7 @@ int main(int argc, char *argv[]) {
         }
       } 
       else if (newcmd == Command::Restart) {
-        grid.init(startLevel, seed, scriptFile);
+        grid.init(startLevel, seed, scriptFile, twoPlayer);
       } 
       else if(newcmd == Command::SetBlock){
         string para = get<1>(fullCmd.second);

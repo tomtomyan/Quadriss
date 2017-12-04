@@ -11,6 +11,9 @@ struct GameState{
  int highScore;
  BlockType nextBlock;
  std::vector<std::pair<int, int>> nextBlockCoords;
+ bool twoPlayer;
+ int player2Score;
+ bool isMainPlayer;
 };
 
 #endif
