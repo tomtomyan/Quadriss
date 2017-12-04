@@ -36,7 +36,7 @@ class Grid {
   bool gameOver = false;
 
   void checkHint();
-  void setLevel(LevelType level, int seed = 1);
+  void setLevel(LevelType level, int seed = 1, std::string fileName = "sequence.txt");
   void checkRows();
   void placeLowest();
   bool checkValid(std::vector<std::pair<int, int>> coordinates);

@@ -284,12 +284,12 @@ void Grid::drop(int n) {
   }
 }
 
-void Grid::setLevel(LevelType level, int seed){
+void Grid::setLevel(LevelType level, int seed, string fileName){
   if (gameOver) return;
   checkHint();
   if (theLevel) seed = theLevel->getSeed();
   if (level == LevelType::Level0) {
-    theLevel = make_unique<Level0>("sequence.txt"); 
+    theLevel = make_unique<Level0>(fileName); 
   } else if (level == LevelType::Level1){
     theLevel = make_unique<Level1>();
   } else if (level == LevelType::Level2) {
@@ -399,7 +399,7 @@ void Grid::init(LevelType level, int seed, bool isRandom, string fileName) {
     theGrid.emplace_back(row);
   }
   
-  setLevel(level, seed);
+  setLevel(level, seed, fileName);
   theLevel->setIsRandom(isRandom);
   theLevel->setFileName(fileName);
   currentLeftBottom = make_pair(0,3);
