@@ -50,7 +50,7 @@ class Grid {
   void addScore(bool isLine, LevelType level, int numLines);
   void left(int);
   void right(int);
-  void down(int);
+  void down(int n, bool heavy = false);
   void clockwise(int);
   void counterClockwise(int);
   void drop(int);

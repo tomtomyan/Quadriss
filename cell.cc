@@ -31,10 +31,11 @@ Info Cell::getInfo() const{
   return Info{LevelType::None, BlockType::None, DisplayFormat::Standard};
 }
 
-LevelType Cell::deleteCell(pair<int, int> coords){
+LevelType Cell::deleteCell(pair<int, int> coords, bool lastChecked){
   LevelType lt = LevelType::None;
   if(block){
     State s = {coords, Message::Delete};
+    if(lastChecked) s.message = Message::DeleteRows;
     setState(s);
     notifyObservers();
     lt = block->cellDeleted();

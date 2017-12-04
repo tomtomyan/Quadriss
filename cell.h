@@ -14,7 +14,7 @@ class Cell :  public Subject<Info, State>, public Observer<Info, State>, public 
   public:
   void notify(std::shared_ptr<Subject<Info, State>> whoFrom) override;
   Info getInfo() const override;
-  LevelType deleteCell(std::pair<int, int> coords);
+  LevelType deleteCell(std::pair<int, int> coords, bool lastChecked = false);
   std::shared_ptr<Subject<Info, State>> getThisSubjectPtr() override;
   
   friend std::ostream &operator<<(std::ostream &out, const std::shared_ptr<Cell> &c);

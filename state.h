@@ -4,7 +4,7 @@
 //#include <iostream>
 #include <utility>
 
-enum class Message{None, Attach, Detach, Delete};
+enum class Message{None, Attach, Detach, Delete, DeleteRows};
 
 struct State{
   std::pair<int, int> coordinates;

@@ -101,7 +101,7 @@ void GraphicsDisplay::clearRows(){
     }
     grid.insert(grid.begin(), row);
   }
-  rowsDelete.clear();
+  rowsDeleted.clear();
 }
 
 void GraphicsDisplay::redraw(GameState gameState){
@@ -116,7 +116,7 @@ void GraphicsDisplay::redraw(GameState gameState){
     this->gameOver = false;
   }
 
-  print();
+//  print();
   // Draws text at top
   xw.fillRectangle(0, 0, cellSize*gridWidth, (cellSize*2)+(cellSize/2), blankColour);
   ostringstream levelStr;
@@ -165,7 +165,7 @@ void GraphicsDisplay::notify(shared_ptr<Subject<Info, State>> whoNotified) {
   pair<int, int> coords = state.coordinates;
   int colour = colourDefinition(info.type, info.format);
 
-  if(state.message == Message::Delete){
+  if(state.message == Message::Delete || state.message == Message::DeleteRows){
     grid.at(coords.second).at(coords.first) = make_pair(true, colour);
     bool deleteRow = true;
     for(int i=0; i<gridWidth; i++){
@@ -180,6 +180,7 @@ void GraphicsDisplay::notify(shared_ptr<Subject<Info, State>> whoNotified) {
       maxRowShift = coords.second+1 > maxRowShift ? coords.second+1 : maxRowShift;
       rowsDeleted.emplace_back(coords.second);
     }
+    if(state.message == Message::DeleteRows) clearRows();
   }
   else{
     grid.at(coords.second).at(coords.first) = make_pair(false, colour);

@@ -57,7 +57,9 @@ void Grid::checkRows() {
     if (clear) {
       rowsDeleted.emplace_back(y);
       for (int x = 0; x < width; x++) {
-        LevelType deletedCellLevel = theGrid[y][x]->deleteCell(make_pair(x, y));
+        LevelType deletedCellLevel;
+        if(i == size-1 && x == width-1) deletedCellLevel = theGrid[y][x]->deleteCell(make_pair(x, y), true);
+        else deletedCellLevel = theGrid[y][x]->deleteCell(make_pair(x, y));
       	if(deletedCellLevel != LevelType::None){
   	      addScore(false, deletedCellLevel, 0);
       	}
@@ -168,7 +170,7 @@ void Grid::left(int n) {
       attach(old);
     }
   }
-  if(theLevel->getIsHeavy()) down(1);
+  if(theLevel->getIsHeavy()) down(1, true);
 }
 
 void Grid::right(int n) {
@@ -186,10 +188,10 @@ void Grid::right(int n) {
       attach(old);
     }
   }
-  if(theLevel->getIsHeavy()) down(1);
+  if(theLevel->getIsHeavy()) down(1, true);
 }
 
-void Grid::down(int n) {
+void Grid::down(int n, bool heavy) {
   if (gameOver) return;
   checkHint();
   for (int i = 0; i < n; i++) {
@@ -204,7 +206,7 @@ void Grid::down(int n) {
       attach(old);
     }
   }
-  if(theLevel->getIsHeavy()) down(1);
+  if(!heavy && theLevel->getIsHeavy()) down(1, true);
 }
 
 void Grid::clockwise(int n) {
@@ -221,7 +223,7 @@ void Grid::clockwise(int n) {
       attach(old);
     }
   }
-  if(theLevel->getIsHeavy()) down(1);
+  if(theLevel->getIsHeavy()) down(1, true);
 }
 
 void Grid::counterClockwise(int n) {
@@ -238,7 +240,7 @@ void Grid::counterClockwise(int n) {
       attach(old);
     }
   }
-  if(theLevel->getIsHeavy()) down(1);
+  if(theLevel->getIsHeavy()) down(1, true);
 }
 
 void Grid::drop(int n) {
