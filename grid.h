@@ -40,7 +40,7 @@ class Grid {
   void checkRows();
   void placeLowest();
   bool checkValid(std::vector<std::pair<int, int>> coordinates);
-  void attach(std::vector<std::pair<int, int>> &v);
+  void attach(std::vector<std::pair<int, int>> &v, bool initial = false);
   void detach(std::vector<std::pair<int, int>> &v);
 
   public:

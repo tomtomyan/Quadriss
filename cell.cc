@@ -10,7 +10,7 @@ shared_ptr<Subject<Info, State>> Cell::getThisSubjectPtr(){
 
 void Cell::notify(shared_ptr<Subject<Info, State>> whoFrom){
   State wfState = whoFrom->getState();
-  if(wfState.message == Message::Attach){
+  if(wfState.message == Message::Attach || wfState.message == Message::FirstAttach){
     block = dynamic_pointer_cast<Block>(whoFrom);
     if(block){
       setState(wfState);

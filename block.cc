@@ -58,10 +58,11 @@ vector<pair<int, int>> Block::getCoordinates(pair<int, int> coords) const{
   return baseGetCoordinates(rotationState, coords);
 }
 
-void Block::notifyAttachDetach(bool isAttach, shared_ptr<Observer<Info, State>> ob, pair<int, int> coords){
+void Block::notifyAttachDetach(bool isAttach, shared_ptr<Observer<Info, State>> ob, pair<int, int> coords, bool isFirst){
   State newState;
   newState.coordinates = coords;
   newState.message = isAttach ? Message::Attach : Message::Detach;
+  if(isAttach && isFirst) newState.message = Message::FirstAttach;
   setState(newState);
   ob->notify(getThisPtr());
   if(isAttach) attach(ob);

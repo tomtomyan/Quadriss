@@ -35,9 +35,11 @@ void Grid::detach(vector<pair<int, int>> &v) {
   }
 }
 
-void Grid::attach(vector<pair<int, int>> &v) {
+void Grid::attach(vector<pair<int, int>> &v, bool initial) {
   for (size_t i = 0; i < v.size(); i++) {
-    currentBlock->notifyAttachDetach(true, theGrid[v[i].second][v[i].first], v[i]);
+    bool isFirst = false;
+    if(initial && i==0) isFirst = true;
+    currentBlock->notifyAttachDetach(true, theGrid[v[i].second][v[i].first], v[i], isFirst);
   }
 }
 
@@ -393,7 +395,7 @@ void Grid::init(LevelType level, int seed, bool isRandom, string fileName) {
   currentBlock = theLevel->generateBlock();
 
   vector<pair<int, int>> coords = currentBlock->getCoordinates(currentLeftBottom);
-  attach(coords);
+  attach(coords, true);
   nextBlock = theLevel->generateBlock();
   gameOver = false;
 }

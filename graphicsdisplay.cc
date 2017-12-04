@@ -111,10 +111,10 @@ void GraphicsDisplay::redraw(GameState gameState){
     createGrid();
     return;
   }
-  else if(this->gameOver && !(gameState.gameOver)){
+/*  else if(this->gameOver && !(gameState.gameOver)){
     drawInitial();
     this->gameOver = false;
-  }
+  }*/
 
 //  print();
   // Draws text at top
@@ -183,6 +183,11 @@ void GraphicsDisplay::notify(shared_ptr<Subject<Info, State>> whoNotified) {
     if(state.message == Message::DeleteRows) clearRows();
   }
   else{
+    if(state.message == Message::FirstAttach){
+      createGrid();
+      drawInitial();
+      this->gameOver = false;
+    }
     grid.at(coords.second).at(coords.first) = make_pair(false, colour);
     queue.emplace_back(make_pair(coords, colour));
   }

@@ -32,7 +32,7 @@ class Block : public Subject<Info, State>{
   void rotate(bool clockwise);
   LevelType cellDeleted();
   std::vector<std::pair<int, int>> getCoordinates(std::pair<int, int>) const;
-  void notifyAttachDetach(bool isAttach, std::shared_ptr<Observer<Info, State>> ob, std::pair<int, int> coords);
+  void notifyAttachDetach(bool isAttach, std::shared_ptr<Observer<Info, State>> ob, std::pair<int, int> coords, bool isFirst = false);
   std::shared_ptr<Subject<Info, State>> getThisSubjectPtr() override;
 
   friend std::ostream &operator<<(std::ostream &out, const std::shared_ptr<Block> &b);
