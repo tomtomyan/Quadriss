@@ -2,23 +2,80 @@
 #include <string>
 #include <sstream>
 #include <algorithm>
+#include <tuple>
 #include "grid.h"
 #include "graphicsdisplay.h"
 using namespace std;
+
+enum Command {Invalid, Left, Right, Down, Clockwise, CounterClockwise, Drop, LevelUp, LevelDown, NoRandom, Random, Sequence, Restart, Hint, SetBlock, Rename};
+
+pair<Command, tuple<int, string>> interpretCommand(vector<pair<Command, vector<string>>> &allCmds, string cmd){
+  string argument;
+  istringstream iss{cmd};
+  int n;
+  if (!(iss >> n)) n = 1;
+  iss >> cmd;
+
+  Command fullCmd;
+  int size = allCmds.size();
+  int counter = 0; //counter stores occurences where the cmd is found in the list of strings
+  for (int i = 0; i < size; i++) {
+    pair<Command, vector<string>> cmdDef = allCmds.at(i);
+    int defSize = cmdDef.second.size();
+    for(int j=0; j < defSize; j++){
+      if (cmdDef.second.at(j).find(cmd) == 0) {
+        counter++;
+        fullCmd = cmdDef.first;
+      }
+    }
+  }
+
+  if (counter != 1) fullCmd = Command::Invalid;
+  if(Command::SetBlock) argument = cmd;
+  return make_pair(fullCmd, make_tuple(n, argument));
+}
 
 
 int main(int argc, char *argv[]) {
   cin.exceptions(ios::eofbit|ios::failbit);
   string cmd;
   Grid grid;
-  shared_ptr<GraphicsDisplay> graphDis; 
-  // Vector holds all of the known commands
-  vector<vector<string>> allCmds;
-  for (int i = 0; i < 13; ++i) {  // Remove?
-    vector<string> cmdType;
-    allCmds.emplace_back(cmdType);
-  }
+  shared_ptr<GraphicsDisplay> graphDis;
 
+  // Vector holds all of the known commands
+  vector<pair<Command, vector<string>>> allCmds;
+    auto temp1 = make_pair(Command::Left, vector<string>{"left"});
+    auto temp2 = make_pair(Command::Right, vector<string>{"right"});
+    auto temp3 = make_pair(Command::Down, vector<string>{"down"});
+    auto temp4 = make_pair(Command::Clockwise, vector<string>{"clockwise"});
+    auto temp5 = make_pair(Command::CounterClockwise, vector<string>{"counterclockwise"});
+    auto temp6 = make_pair(Command::Drop, vector<string>{"drop"});
+    auto temp7 = make_pair(Command::LevelUp, vector<string>{"levelup"});
+    auto temp8 = make_pair(Command::LevelDown, vector<string>{"leveldown"});
+    auto temp9 = make_pair(Command::NoRandom, vector<string>{"norandom"});
+    auto temp10 = make_pair(Command::Random, vector<string>{"random"});
+    auto temp11 = make_pair(Command::Sequence, vector<string>{"sequence"});
+    auto temp12 = make_pair(Command::Restart, vector<string>{"restart"});
+    auto temp13 = make_pair(Command::Hint, vector<string>{"hint"});
+    auto temp14 = make_pair(Command::SetBlock, vector<string>{"I","J","S","Z","O","T","L"});
+    auto temp15 = make_pair(Command::Rename, vector<string>{"rename"});
+    allCmds.emplace_back(temp1);
+    allCmds.emplace_back(temp2);
+    allCmds.emplace_back(temp3);
+    allCmds.emplace_back(temp4);
+    allCmds.emplace_back(temp5);
+    allCmds.emplace_back(temp6);
+    allCmds.emplace_back(temp7);
+    allCmds.emplace_back(temp8);
+    allCmds.emplace_back(temp9);
+    allCmds.emplace_back(temp10);
+    allCmds.emplace_back(temp11);
+    allCmds.emplace_back(temp12);
+    allCmds.emplace_back(temp13);
+    allCmds.emplace_back(temp14);
+    allCmds.emplace_back(temp15);
+
+  // COMMAND LINE ARGUMENT VARIABLES
   bool textOnly = false;
   string scriptFile = "sequence.txt";
   string startLevel = "0"; // default start level
@@ -83,205 +140,103 @@ int main(int argc, char *argv[]) {
 
   //COMMAND INTERPRETER
   try {
-      string str[13] = {"left", "right", "down", "clockwise", "counterclockwise", "drop", "levelup", "leveldown", "norandom", "random", "sequence", "restart", "hint"};
     while (true) {
+      // GETS COMMAND FROM INPUT
       if (isSequence && seqFirstTime) {
-        seqFirstTime = false;
-        fileStream = ifstream{fileName};
-        if (!(fileStream >> cmd)) {
-          isSequence = false;
-          cout << grid;
-          if (!textOnly) graphDis->redraw(grid.getGameState());
-          cout << "End of sequence file. Start providing input." << endl;
-          continue;
-        }
-      }
-      else if (isSequence) {
-        if (!(fileStream >> cmd)) {
-          isSequence = false;
-          cout << grid;
-          if (!textOnly)
-          graphDis->redraw(grid.getGameState());
-          cout << "End of sequence file. Start providing input." << endl;
-          continue;
-        }
-      }
-      else {
-        cin >> cmd;
-      }
-
-      if (cmd == "I") {
-        grid.setBlock(BlockType::IBlock);
-        cout << grid;
-        if (!textOnly)
-        graphDis->redraw(grid.getGameState());
-        continue;
-      }
-      else if (cmd == "J") {
-        grid.setBlock(BlockType::JBlock);
-        cout << grid;
-        if (!textOnly)
-        graphDis->redraw(grid.getGameState());
-        continue;
-      }
-      else if (cmd == "L") {
-        grid.setBlock(BlockType::LBlock);
-        cout << grid;
-        if (!textOnly)
-        graphDis->redraw(grid.getGameState());
-        continue;
-      }
-      else if (cmd == "O") {
-        grid.setBlock(BlockType::OBlock);
-        cout << grid;
-        if (!textOnly)
-        graphDis->redraw(grid.getGameState());
-        continue;
-      }
-      else if (cmd == "S") {
-        grid.setBlock(BlockType::SBlock);
-        cout << grid;
-        if (!textOnly)
-        graphDis->redraw(grid.getGameState());
-        continue;
-      }
-      else if (cmd == "Z") {
-        grid.setBlock(BlockType::ZBlock);
-        cout << grid;
-        if (!textOnly)
-        graphDis->redraw(grid.getGameState());
-        continue;
-      }
-      else if (cmd == "T") {
-        grid.setBlock(BlockType::TBlock);
-        cout << grid;
-        if (!textOnly)
-        graphDis->redraw(grid.getGameState());
-        continue;
-      }
-      
-      //////////// New feature: Renaming commands //////////////
-      string newCmdName;
-      if (cmd == "rename") {
-         cin >> cmd;
-         cin >> newCmdName;
-         int index;
-         if (cmd == "left") index  = 0;
-         else if (cmd == "right") index = 1;
-         else if (cmd == "down") index = 2;
-         else if (cmd == "clockwise") index = 3;
-         else if (cmd == "counterclockwise") index = 4;
-         else if (cmd == "drop") index = 5;
-         else if (cmd == "levelup") index = 6;
-         else if (cmd == "leveldown") index = 7;
-         else if (cmd == "norandom") index = 8;
-         else if (cmd == "random") index = 9;
-         else if (cmd == "sequence") index = 10;
-         else if (cmd == "restart") index = 11;
-         else if (cmd == "hint") index = 12;
-         else {
-            cout << "Invalid rename. Try again." << endl;
+        if(seqFirstTime){
+          seqFirstTime = false;
+          fileStream = ifstream{fileName};
+          if (!(fileStream >> cmd)) {
+            isSequence = false;
+            cout << "End of sequence file. Start providing input." << endl;
             continue;
-         }
-         allCmds.at(index).emplace_back(newCmdName);
-         cout << grid;
-         if (!textOnly)
-         graphDis->redraw(grid.getGameState());
-         continue;
-      }
-      // first search if cmd is in allCmds
-      for (unsigned int i = 0; i < allCmds.size(); ++i) {
-         auto s = find(allCmds.at(i).begin(), allCmds.at(i).end(), cmd);
-         if (s != allCmds.at(i).end()) { // found cmd in allCmds
-            if (i == 0) grid.left(1);
-            else if (i == 1) grid.right(1);
-            else if (i == 2) grid.down(1);
-            else if (i == 3) grid.clockwise(1);
-            else if (i == 4) grid.counterClockwise(1);
-            else if (i == 5) grid.drop(1);
-            else if (i == 6) grid.levelUp(1);
-            else if (i == 7) grid.levelDown(1);
-            else if (i == 8) {
-              string file;
-              if (cin >> file) {
-                grid.random(false, file);
-              }
-            }
-            else if (i == 9) grid.random(true);
-            else if (i == 10) {
-              string file;
-              if (cin >> file) {
-                grid.random(false, file);
-              }
-            }
-            else if (i == 11) {}
-            else { grid.hint(); }
-              cout << grid;
-        if (!textOnly)
-              graphDis->redraw(grid.getGameState());
-            }
-      }
-      //////////////////////////////////////////////////////////
-
-
-      // pass in file assuming it is valid
-      // handle if file does not exist case in Level and Grid
-      istringstream iss{cmd};
-      
-      int n;
-      if (!(iss >> n)) n = 1;
-      iss >> cmd;
-
-      int counter = 0; //counter stores occurences where the cmd is found in the list of strings
-      string newcmd;
-      for (int i = 0; i < 13; i++) {
-        if (str[i].find(cmd) == 0) {
-          counter++;
-          newcmd = str[i];
+          }
+        }
+        else if (!(fileStream >> cmd)) {
+          isSequence = false;
+          cout << "End of sequence file. Start providing input." << endl;
+          continue;
         }
       }
+      else if(!(cin >> cmd)){
+        cout << "Error, please try again" << endl;
+        continue;
+      }
 
-      if (counter != 1) continue; //if it isn't 1 then restart the loop
+      // EXECUTES COMMAND
+      auto fullCmd = interpretCommand(allCmds, cmd);
+      Command newcmd = fullCmd.first;
+      int n = get<0>(fullCmd.second);
 
-      //cout << newcmd << endl;
-
-      if (newcmd == "left") {
-        grid.left(n);
-      } else if (newcmd == "right") {
-	      grid.right(n);
-      } else if (newcmd == "down") {
-	      grid.down(n);
-      } else if (newcmd == "clockwise") {
-	      grid.clockwise(n);
-      } else if (newcmd == "counterclockwise") {
-	      grid.counterClockwise(n);
-      } else if (newcmd == "drop") {
-	      grid.drop(n);
-      } else if (newcmd == "levelup") {
-	      grid.levelUp(n);
-      } else if (newcmd == "leveldown") {
-	      grid.levelDown(n);
-      } else if (newcmd == "norandom") {
-          string file;
-          if (cin >> file) {
-            grid.random(false, file);
+      if(newcmd == Command::Invalid){
+        cout << "Invalid command. Please try again" << endl;
+        continue;
+      }
+      else if (newcmd == Command::Left) grid.left(n);
+      else if (newcmd == Command::Right) grid.right(n);
+      else if (newcmd == Command::Down) grid.down(n);
+      else if (newcmd == Command::Clockwise) grid.clockwise(n);
+      else if (newcmd == Command::CounterClockwise) grid.counterClockwise(n);
+      else if (newcmd == Command::Drop) grid.drop(n);
+      else if (newcmd == Command::LevelUp) grid.levelUp(n);
+      else if (newcmd == Command::LevelDown) grid.levelDown(n);
+      else if (newcmd == Command::Random) grid.random(true);
+      else if (newcmd == Command::Hint) grid.hint();
+      else if (newcmd == Command::NoRandom) {
+        string file;
+        if ((isSequence && fileStream >> file) || (cin >> file)) {
+          grid.random(false, file);
+        }
+      } 
+      else if (newcmd == Command::Sequence) {
+        if ((isSequence && fileStream >> fileName) || (cin >> fileName)) {
+	        seqFirstTime = true;
+          isSequence = true;
+        }
+      } 
+      else if (newcmd == Command::Restart) {
+        grid.init(LevelType::Level0, seed, false, scriptFile);
+      } 
+      else if(newcmd = Command::SetBlock){
+        string para = get<1>(fullCmd.second);
+        BlockType type;
+        if (para == "I") type = BlockType::IBlock;
+        else if (para == "J") type = BlockType::JBlock;
+        else if (para == "L") type = BlockType::LBlock;
+        else if (para == "O") type = BlockType::OBlock;
+        else if (para == "S") type = BlockType::SBlock;
+        else if (para == "Z") type = BlockType::ZBlock;
+        else if (para == "T") type = BlockType::TBlock;
+        grid.setBlock(type);
+      }
+      else if (newcmd == Command::Rename) {
+        //////////// New feature: Renaming commands //////////////
+        string renamedCmd;
+        string newCmdName;
+        if(isSequence){
+          fileStream >> renamedCmd;
+          fileStream >> newCmdName;
+        }
+        else{
+          cin >> renamedCmd;
+          cin >> newCmdName;
+        }
+        auto toBeRenamed = interpretCommand(allCmds,renamedCmd);
+        auto result = interpretCommand(allCmds,newCmdName);
+        if(toBeRenamed.first==Command::Invalid || result.first!=Command::Invalid){
+          cout << "Invalid input, please try again." << endl;
+          continue;
+        }
+        int allSize = allCmds.size();
+        for(int i=0; i<allSize; i++){
+          if(allCmds.at(i).first == toBeRenamed.first){
+            allCmds.at(i).second.emplace_back(newCmdName);
           }
-      } else if (newcmd == "random") {
-	      grid.random(true);
-      } else if (newcmd == "sequence") {
-          if (cin >> fileName) {
-	    seqFirstTime = true;
-            isSequence = true;
-          }
-      } else if (newcmd == "restart") {
-          grid.init(LevelType::Level0, seed, false, scriptFile);
-      } else if (newcmd == "hint") {
-        grid.hint();
+        }
       }
 
       cout << grid;
-        if (!textOnly)
-      graphDis->redraw(grid.getGameState());
+      if (!textOnly) graphDis->redraw(grid.getGameState());
     }
   } catch (ios::failure &) {}
 
