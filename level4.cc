@@ -66,8 +66,7 @@ shared_ptr<Block> Level4::generateBlock(BlockType type) {
 
 
 shared_ptr<Block> Level4::obstacle(pair<int,int> &leftBottom) {
-	int leftBottomRow = leftBottom.second; // y-value
-	leftBottom = make_pair(5, leftBottomRow);
+	leftBottom = make_pair(5, 3);
   numDrops++;
   if (numDrops % 5 == 0) return makeBlock(BlockType::OneCellBlock, LevelType::Level4, DisplayFormat::Obstacle);
   return nullptr;

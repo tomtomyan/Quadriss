@@ -47,6 +47,7 @@ void Grid::checkRows() {
   vector<pair<int, int>> c = currentBlock->getCoordinates(currentLeftBottom);
   vector<int> rowsDeleted;
   int size = c.size();
+  vector<pair<int, int>> lastCells;
   for(int i=0; i<size; i++){
     int y = c[i].second;
     bool clear = true;
@@ -59,13 +60,23 @@ void Grid::checkRows() {
     if (clear) {
       rowsDeleted.emplace_back(y);
       for (int x = 0; x < width; x++) {
-        LevelType deletedCellLevel;
-        if(i == size-1 && x == width-1) deletedCellLevel = theGrid[y][x]->deleteCell(make_pair(x, y), true);
-        else deletedCellLevel = theGrid[y][x]->deleteCell(make_pair(x, y));
-      	if(deletedCellLevel != LevelType::None){
-  	      addScore(false, deletedCellLevel, 0);
-      	}
+        if(x == width-1) lastCells.emplace_back(make_pair(x, y));
+        else{
+          LevelType deletedCellLevel = theGrid[y][x]->deleteCell(make_pair(x, y));
+        	if(deletedCellLevel != LevelType::None){
+  	        addScore(false, deletedCellLevel, 0);
+      	  }
+        }
       }
+    }
+  } 
+  int lcSize = lastCells.size();
+  for(int i=0; i<lcSize; i++){
+    bool isVeryLast = false;
+    if(i == lcSize-1) isVeryLast = true;
+    LevelType deletedCellLevel = theGrid[lastCells.at(i).second][lastCells.at(i).first]->deleteCell(lastCells.at(i), isVeryLast);
+    if(deletedCellLevel != LevelType::None){
+  	  addScore(false, deletedCellLevel, 0);
     }
   }
 

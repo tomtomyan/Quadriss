@@ -111,10 +111,6 @@ void GraphicsDisplay::redraw(GameState gameState){
     createGrid();
     return;
   }
-/*  else if(this->gameOver && !(gameState.gameOver)){
-    drawInitial();
-    this->gameOver = false;
-  }*/
 
 //  print();
   // Draws text at top
