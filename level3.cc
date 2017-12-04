@@ -1,41 +1,20 @@
 #include "level3.h"
 #include "info.h"
-/*
-#include "iblock.h"
-#include "jblock.h"
-#include "lblock.h"
-#include "oblock.h"
-#include "sblock.h"
-#include "zblock.h"
-#include "tblock.h"
-*/
 #include "invalidfileexcept.h"
 #include "invalidshapeexcept.h"
 #include <fstream>
 using namespace std;
 
-Level3::Level3(string fileName):
-        Level{LevelType::Level3, true, true} {}
+Level3::Level3(int seed,string fileName):
+        Level{LevelType::Level3, true, true, seed} {}
 
-
-void Level3::setIsRandom(bool isRandom) {
-        if (isRandom == false) {
-                fileStream = ifstream{getFileName()};
-        }
+void Level3::setIsRandom(bool isRandom, string fileName) {
+  if(fileName != "") this->fileName = fileName;
+  if (isRandom == false) {
+    fileStream = ifstream{this->fileName};
+  }
 	this->isRandom = isRandom;
 }
-
-
-void Level3::setFileName(string fileName) {
-	this->fileName = fileName;
-}
-
-/*
-void setFileStream(ifstream &fileStream) {
-	this->fileStream = fileStream;
-}
-*/
-
 
 // S: 18/81 -> 1-18
 // Z: 18/81 -> 19-36
@@ -46,11 +25,6 @@ void setFileStream(ifstream &fileStream) {
 // T: " -> 73-81
 shared_ptr<Block> Level3::generateBlock(BlockType type) {
 	if (type == BlockType::None && getIsRandom() == false) {
-		/*
-		if (!(getFileStream().is_open())) {
-			throw InvalidFile{};
-		}
-		*/
 		string input;  // input is type of Blocks
 		if (fileStream >> input) {
       type = inputInterpreter(input);
@@ -65,13 +39,9 @@ shared_ptr<Block> Level3::generateBlock(BlockType type) {
     else if ((55 <= randNum) && (randNum <= 63)) type = BlockType::LBlock;
     else if ((64 <= randNum) && (randNum <= 72)) type = BlockType::OBlock;
     else if ((73 <= randNum) && (randNum <= 81)) type = BlockType::TBlock;
-    else{
-      //throw something??
-    }
 	}
   return makeBlock(type, LevelType::Level3);
 }
-
 
 shared_ptr<Block> Level3::obstacle(pair<int,int> &) {
 	return nullptr;

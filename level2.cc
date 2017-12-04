@@ -1,29 +1,11 @@
 #include "level2.h"
 #include "info.h"
-/*
-#include "iblock.h"
-#include "jblock.h"
-#include "lblock.h"
-#include "oblock.h"
-#include "sblock.h"
-#include "zblock.h"
-#include "tblock.h"
-*/
 using namespace std;
 
+Level2::Level2(int seed):
+        Level{LevelType::Level2, false, true, seed} {}
 
-Level2::Level2():
-        Level{LevelType::Level2, false, true} {}
-
-
-void Level2::setIsRandom(bool isRandom) {}
-
-
-void Level2::setFileName(string fileName) {}
-
-
-//void setFileStream(ifstream &fileStream) {}
-
+void Level2::setIsRandom(bool isRandom, string fileName) {}
 
 shared_ptr<Block> Level2::generateBlock(BlockType type) {
   if(type == BlockType::None){
@@ -35,13 +17,9 @@ shared_ptr<Block> Level2::generateBlock(BlockType type) {
     else if (randNum == 5) type = BlockType::LBlock;
     else if (randNum == 6) type = BlockType::OBlock;
     else if (randNum == 7) type = BlockType::TBlock;
-    else{
-      //throw something?
-    }
   }
   return makeBlock(type, LevelType::Level2);
 }
-
 
 shared_ptr<Block> Level2::obstacle(pair<int,int> &) {
 	return nullptr;

@@ -4,8 +4,10 @@
 #include <string>
 using namespace std;
 
-Level::Level(LevelType level, bool isHeavy, bool isRandom, string fileName):
-	level{level}, isHeavy{isHeavy}, isRandom{isRandom}, fileName{fileName} {}
+Level::Level(LevelType level, bool isHeavy, bool isRandom, int seed, string fileName):
+ level{level}, isHeavy{isHeavy}, isRandom{isRandom}, seed{seed}, fileName{fileName}{
+  srand(seed);
+}
 
 Level::~Level() {}
 
@@ -13,32 +15,17 @@ LevelType Level::getLevel() {
 	return level;
 }
 
-
 bool Level::getIsHeavy() {
 	return isHeavy;
 }
-
 
 bool Level::getIsRandom() {
 	return isRandom;
 }
 
-
-string Level::getFileName() {
-	return fileName;
-}
-
-
-void Level::setSeed(int seed) {
-	this->seed = seed;
-  srand(seed);
-}
-
-
 int Level::getSeed() {
 	return seed;
 }
-
 
 shared_ptr<Block> Level::makeBlock(BlockType type, LevelType level, DisplayFormat format){
   shared_ptr<Block> block = nullptr;

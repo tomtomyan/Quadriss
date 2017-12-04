@@ -36,7 +36,7 @@ class Grid {
   bool gameOver = false;
 
   void checkHint();
-  void setLevel(LevelType level, int seed = 1, std::string fileName = "sequence.txt");
+  void setLevel(LevelType level, int seed = 1, std::string fileName = "");
   void checkRows();
   void placeLowest();
   bool checkValid(std::vector<std::pair<int, int>> coordinates);
@@ -55,10 +55,10 @@ class Grid {
   void counterClockwise(int);
   void drop(int);
   void levelUp(int);
-  void levelDown(int);
+  void levelDown(int, std::string fileName = "sequence.txt");
   void random(bool isRandom, std::string fileName = "");
   void setBlock(BlockType type);
-  void init(LevelType level, int seed, bool isRandom = true, std::string fileName = "");
+  void init(LevelType level, int seed, std::string fileName = "");
   void hint();
   void attachObserver(std::shared_ptr<Observer<Info, State>> ob);
   void detachObserver(std::shared_ptr<Observer<Info, State>> ob);

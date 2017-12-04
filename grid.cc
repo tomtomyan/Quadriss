@@ -296,17 +296,17 @@ void Grid::setLevel(LevelType level, int seed, string fileName){
   checkHint();
   if (theLevel) seed = theLevel->getSeed();
   if (level == LevelType::Level0) {
-    theLevel = make_unique<Level0>(fileName); 
+    theLevel = make_unique<Level0>(seed, fileName); 
   } else if (level == LevelType::Level1){
-    theLevel = make_unique<Level1>();
+    theLevel = make_unique<Level1>(seed);
   } else if (level == LevelType::Level2) {
-    theLevel = make_unique<Level2>();
+    theLevel = make_unique<Level2>(seed);
   } else if (level == LevelType::Level3) {
-    theLevel = make_unique<Level3>();
+    theLevel = make_unique<Level3>(seed);
   } else if (level == LevelType::Level4) {
-    theLevel = make_unique<Level4>();
+    theLevel = make_unique<Level4>(seed);
   }
-  theLevel->setSeed(seed);
+//  theLevel->setSeed(seed);
 }
 
 void Grid::levelUp(int n) {
@@ -340,7 +340,7 @@ void Grid::levelUp(int n) {
   setLevel(level);
 }
 
-void Grid::levelDown(int n) {
+void Grid::levelDown(int n, string fileName) {
   if (gameOver) return;
   checkHint();
   int l = 0;
@@ -368,14 +368,14 @@ void Grid::levelDown(int n) {
   } else { 
     level = LevelType::Level0;
   }
-  setLevel(level);
+  setLevel(level,1, fileName);
 }
 
 void Grid::random(bool isRandom, string fileName) {
   if (gameOver) return;
   checkHint();
-  theLevel->setIsRandom(isRandom);
-  if(!isRandom) theLevel->setFileName(fileName);
+  theLevel->setIsRandom(isRandom, fileName);
+//  if(!isRandom) theLevel->setFileName(fileName);
 }
 
 void Grid::setBlock(BlockType type) {
@@ -391,7 +391,7 @@ void Grid::setBlock(BlockType type) {
   attach(cur);
 }
 
-void Grid::init(LevelType level, int seed, bool isRandom, string fileName) {
+void Grid::init(LevelType level, int seed, string fileName) {
   if (theGrid.size()) {
     for (int i = 0; i < 15; i++) {
       for (int j = 0; j < 11; j++) {
@@ -401,6 +401,8 @@ void Grid::init(LevelType level, int seed, bool isRandom, string fileName) {
       }
     }
   }
+  score = 0;
+  gameOver = false;
   theGrid.clear();
   for (int y = 0; y < height; y++) {
     vector<shared_ptr<Cell>> row;
@@ -414,17 +416,14 @@ void Grid::init(LevelType level, int seed, bool isRandom, string fileName) {
     }
     theGrid.emplace_back(row);
   }
-  
   setLevel(level, seed, fileName);
-  theLevel->setIsRandom(isRandom);
-  theLevel->setFileName(fileName);
+//  theLevel->setFileName(fileName);
   currentLeftBottom = make_pair(0,3);
   currentBlock = theLevel->generateBlock();
 
   vector<pair<int, int>> coords = currentBlock->getCoordinates(currentLeftBottom);
   attach(coords, true);
   nextBlock = theLevel->generateBlock();
-  gameOver = false;
 }
 
 void Grid::hint() {

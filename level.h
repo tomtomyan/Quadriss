@@ -26,17 +26,13 @@ class Level {
 
 	public:
   virtual ~Level();
-	Level(LevelType, bool, bool, std::string fileName = "");
+	Level(LevelType level, bool isHeavy, bool isRandom, int seed, std::string fileName = "");
 	LevelType getLevel();
 	bool getIsHeavy();
-	virtual void setIsRandom(bool) = 0;
+	virtual void setIsRandom(bool, std::string) = 0;
 	bool getIsRandom();
-	virtual void setFileName(std::string) = 0;
-	std::string getFileName();
-	std::ifstream &getFileStream();
-	std::shared_ptr<Block> makeBlock(BlockType type, LevelType level, DisplayFormat format = DisplayFormat::Standard);
-	void setSeed(int seed);
-	int getSeed();
+	int getSeed();	
+  std::shared_ptr<Block> makeBlock(BlockType type, LevelType level, DisplayFormat format = DisplayFormat::Standard);
 	virtual std::shared_ptr<Block> generateBlock(BlockType type = BlockType::None) = 0;
 	virtual std::shared_ptr<Block> obstacle(std::pair<int,int> &) = 0;
 };

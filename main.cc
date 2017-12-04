@@ -51,6 +51,46 @@ bool isValidName(vector<pair<Command, vector<string>>> &allCmds, string newCmd){
   return isValid;
 }
 
+void commandLineInterpreter(int argc, char *argv[], bool &textOnly, string &scriptFile, LevelType &startLevel, int &seed){
+  //COMMAD LINE ARGUMENTS
+  string startLevelStr = "0";
+  for (int i = 1; i < argc; i++) {
+    if (argv[i] == std::string("-text")) {
+      textOnly = true;
+      cout << "Text only mode" << endl;
+    } else if (argv[i] == string("-seed")) {
+      if (i+1 < argc) {
+        int n;
+        string s = argv[i+1];
+        istringstream iss{s};
+        if (iss >> n) {
+          seed = n;
+          cout << "Seed set to " << seed << endl;
+        }
+        ++i;
+      }
+    } else if (argv[i] == string("-scriptfile")) {
+      if (i+1 < argc) {
+        scriptFile = argv[i+1];
+        cout << "Script file set to " << scriptFile << endl;
+        ++i;
+      }
+    } else if (argv[i] == std::string("-startlevel")) {
+      if (i+1 < argc) {
+        startLevelStr = argv[i+1];
+        cout << "Start level set to " << startLevelStr << endl;
+        ++i;
+      }
+    }
+  }
+
+  if (startLevelStr == "1") startLevel = LevelType::Level1;
+  else if (startLevelStr == "2") startLevel = LevelType::Level2;
+  else if (startLevelStr == "3") startLevel = LevelType::Level3;
+  else if (startLevelStr == "4") startLevel = LevelType::Level4;
+  else startLevel = LevelType::Level0;  // if no startlevel option is supplied, start at Level 0
+}
+
 
 int main(int argc, char *argv[]) {
   cin.exceptions(ios::eofbit|ios::failbit);
@@ -94,71 +134,26 @@ int main(int argc, char *argv[]) {
   // COMMAND LINE ARGUMENT VARIABLES
   bool textOnly = false;
   string scriptFile = "sequence.txt";
-  string startLevel = "0"; // default start level
-  bool isSequence = false;
-  bool seqFirstTime = true;
-  string fileName;  // if isSequence is true, read commands from this file
-  ifstream fileStream;
+  LevelType startLevel; //the actual level used later on
   int seed = 1;
-
-  //COMMAD LINE ARGUMENTS
-  for (int i = 1; i < argc; i++) {
-    if (argv[i] == std::string("-text")) {
-      textOnly = true;
-      cout << "Text only mode" << endl;
-    } else if (argv[i] == string("-seed")) {
-      if (i+1 < argc) {
-        int n;
-        string s = argv[i+1];
-        istringstream iss{s};
-        if (iss >> n) {
-          seed = n;
-          cout << "Seed set to " << seed << endl;
-        }
-        ++i;
-      }
-    } else if (argv[i] == string("-scriptfile")) {
-      if (i+1 < argc) {
-        scriptFile = argv[i+1];
-        cout << "Script file set to " << scriptFile << endl;
-        ++i;
-      }
-    } else if (argv[i] == std::string("-startlevel")) {
-      if (i+1 < argc) {
-        startLevel = argv[i+1];
-        cout << "Start level set to " << startLevel << endl;
-        ++i;
-      }
-    }
-  }
-
+  commandLineInterpreter(argc, argv, textOnly, scriptFile, startLevel, seed);
   if (!textOnly) {
     graphDis = make_shared<GraphicsDisplay>(380, 700);
     grid.attachObserver(graphDis);
   }
-
-
-  if (startLevel == "0") {
-    grid.init(LevelType::Level0, seed, false, scriptFile);
-  } else if (startLevel == "1") {
-    grid.init(LevelType::Level1, seed);
-  } else if (startLevel == "2") {
-    grid.init(LevelType::Level2, seed);
-  } else if (startLevel == "3") {
-    grid.init(LevelType::Level3, seed);
-  } else if (startLevel == "4") {
-    grid.init(LevelType::Level4, seed);
-  } else {  // if no startlevel option is supplied, start at Level 0
-    grid.init(LevelType::Level0, seed, false, scriptFile);
-  }
+  grid.init(startLevel, seed, scriptFile);
   cout << grid << endl;
   if (!textOnly) graphDis->redraw(grid.getGameState());
-
+  
   //COMMAND INTERPRETER
-  try {
+  try { 
+    bool isSequence = false;
+    bool seqFirstTime = true;
+    string fileName;  // if isSequence is true, read commands from this file
+    ifstream fileStream;
     while (true) {
       // GETS COMMAND FROM INPUT
-      if (isSequence && seqFirstTime) {
+      if (isSequence) {
         if(seqFirstTime){
           seqFirstTime = false;
           fileStream = ifstream{fileName};
@@ -195,7 +190,7 @@ int main(int argc, char *argv[]) {
       else if (newcmd == Command::CounterClockwise) grid.counterClockwise(n);
       else if (newcmd == Command::Drop) grid.drop(n);
       else if (newcmd == Command::LevelUp) grid.levelUp(n);
-      else if (newcmd == Command::LevelDown) grid.levelDown(n);
+      else if (newcmd == Command::LevelDown) grid.levelDown(n, scriptFile);
       else if (newcmd == Command::Random) grid.random(true);
       else if (newcmd == Command::Hint) grid.hint();
       else if (newcmd == Command::NoRandom) {
@@ -211,7 +206,7 @@ int main(int argc, char *argv[]) {
         }
       } 
       else if (newcmd == Command::Restart) {
-        grid.init(LevelType::Level0, seed, false, scriptFile);
+        grid.init(startLevel, seed, scriptFile);
       } 
       else if(newcmd == Command::SetBlock){
         string para = get<1>(fullCmd.second);
@@ -255,5 +250,4 @@ int main(int argc, char *argv[]) {
       if (!textOnly) graphDis->redraw(grid.getGameState());
     }
   } catch (ios::failure &) {}
-
 }

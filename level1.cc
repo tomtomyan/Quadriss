@@ -1,28 +1,10 @@
 #include "level1.h"
-/*
-#include "iblock.h"
-#include "jblock.h"
-#include "lblock.h"
-#include "oblock.h"
-#include "sblock.h"
-#include "zblock.h"
-#include "tblock.h"
-*/
 using namespace std;
 
+Level1::Level1(int seed):
+        Level{LevelType::Level1, false, true, seed} {}
 
-Level1::Level1():
-        Level{LevelType::Level1, false, true} {}
-
-
-void Level1::setIsRandom(bool) {}
-
-
-void Level1::setFileName(string fileName) {}
-
-
-//void setFileStream(ifstream &fileStream) {}
-
+void Level1::setIsRandom(bool isRandom, string fileName) {}
 
 // generate a random number between 1 and 84 inclusive
 // if this number is:
@@ -43,14 +25,11 @@ shared_ptr<Block> Level1::generateBlock(BlockType type) {
     else if ((43 <= randNum) && (randNum <= 56)) type = BlockType::LBlock;
   	else if ((57 <= randNum) && (randNum <= 70)) type = BlockType::OBlock;
   	else if ((71 <= randNum) && (randNum <= 84)) type = BlockType::TBlock;
-    else{
-      //throw something
-    }
   }
   return makeBlock(type, LevelType::Level1);
 }
 
-
 shared_ptr<Block> Level1::obstacle(pair<int,int> &) {
 	return nullptr;
 }
+

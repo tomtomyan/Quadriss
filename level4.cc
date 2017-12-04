@@ -1,47 +1,21 @@
 #include "level4.h"
-/*
-#include "iblock.h"
-#include "jblock.h"
-#include "lblock.h"
-#include "oblock.h"
-#include "sblock.h"
-#include "zblock.h"
-#include "tblock.h"
-*/
 #include "invalidfileexcept.h"
 #include "invalidshapeexcept.h"
 #include <fstream>
 using namespace std;
 
+Level4::Level4(int seed, string fileName):
+        Level{LevelType::Level4, true, true, seed} {}
 
-Level4::Level4(string fileName):
-        Level{LevelType::Level4, true, true} {}
-
-
-void Level4::setIsRandom(bool isRandom) {
-        if (isRandom == false) {
-                fileStream = ifstream{getFileName()};
-        }
+void Level4::setIsRandom(bool isRandom, string fileName) {
+  if(fileName != "" ) this->fileName = fileName;
+  if (isRandom == false) {
+    fileStream = ifstream{this->fileName};
+  }
 	this->isRandom = isRandom;
 }
 
-
-void Level4::setFileName(string fileName) {
-	this->fileName = fileName;
-}
-
-/*
-void setFileStream(ifstream &fileStream) {
-	this->fileStream = fileStream;
-}
-*/
-
 shared_ptr<Block> Level4::generateBlock(BlockType type) {
-	/*
-	if (!(getFileStream().is_open())) {
-		throw InvalidFile{};
-	}
-	*/
   if (type == BlockType::None && getIsRandom() == false) {
     string input;  // input is type of Blocks
     if (fileStream >> input) {
@@ -57,13 +31,9 @@ shared_ptr<Block> Level4::generateBlock(BlockType type) {
     else if ((55 <= randNum) && (randNum <= 63)) type = BlockType::LBlock;
     else if ((64 <= randNum) && (randNum <= 72)) type = BlockType::OBlock;
     else if ((73 <= randNum) && (randNum <= 81)) type = BlockType::TBlock;
-    else {
-      //throw something???
-    }
 	}
   return makeBlock(type, LevelType::Level4);
 }
-
 
 shared_ptr<Block> Level4::obstacle(pair<int,int> &leftBottom) {
 	leftBottom = make_pair(5, 3);

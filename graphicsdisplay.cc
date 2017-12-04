@@ -34,6 +34,7 @@ void GraphicsDisplay::drawInitial(){
   xw.fillRectangle(gridXShift+(cellSize*gridWidth)+1, gridYShift-1, 1, (cellSize*gridHeight)+2);
   needShift = true;
   maxRowShift = gridHeight;
+  playerScore = -1; //to make sure the top part redraws upon a new game
 }
 
 void GraphicsDisplay::drawGameOver(){
