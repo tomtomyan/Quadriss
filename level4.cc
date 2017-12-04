@@ -49,7 +49,6 @@ shared_ptr<Block> Level4::generateBlock(BlockType type) {
     }
   }
   else if (type == BlockType::None) {
-    srand(getSeed());
     int randNum = rand() % 81 + 1;  // 1-81
     if ((1 <= randNum) && (randNum <= 18)) type = BlockType::SBlock;
     else if ((19 <= randNum) && (randNum <= 36)) type = BlockType::ZBlock;

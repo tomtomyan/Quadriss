@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
   bool seqFirstTime = true;
   string fileName;  // if isSequence is true, read commands from this file
   ifstream fileStream;
-  int seed = 123;
+  int seed = 1;
 
   //COMMAD LINE ARGUMENTS
   for (int i = 1; i < argc; i++) {

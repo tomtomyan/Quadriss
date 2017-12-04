@@ -35,7 +35,6 @@ void Level1::setFileName(string fileName) {}
 // 71-84: T
 shared_ptr<Block> Level1::generateBlock(BlockType type) {
   if(type == BlockType::None){
-    srand(getSeed());
     int randNum = rand() % 84 + 1;
     if ((1 <= randNum) && (randNum <= 7)) type = BlockType::SBlock;
     else if ((8 <= randNum) && (randNum <= 14)) type = BlockType::ZBlock;

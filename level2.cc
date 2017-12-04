@@ -27,7 +27,6 @@ void Level2::setFileName(string fileName) {}
 
 shared_ptr<Block> Level2::generateBlock(BlockType type) {
   if(type == BlockType::None){
-    srand(getSeed());
     int randNum = rand() % 7 + 1;
     if (randNum == 1) type = BlockType::SBlock;
     else if (randNum == 2) type = BlockType::ZBlock;

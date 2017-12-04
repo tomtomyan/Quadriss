@@ -30,6 +30,7 @@ string Level::getFileName() {
 
 void Level::setSeed(int seed) {
 	this->seed = seed;
+  srand(seed);
 }
 
 
