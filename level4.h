@@ -7,6 +7,7 @@ class Block;
 
 class Level4 : public Level {
 	std::ifstream fileStream;
+  int numDrops = 0;
         public:
 	Level4(std::string fileName = "");
         void setIsRandom(bool) override;
