@@ -31,7 +31,7 @@ pair<Command, tuple<int, string>> interpretCommand(vector<pair<Command, vector<s
   }
 
   if (counter != 1) fullCmd = Command::Invalid;
-  if(Command::SetBlock) argument = cmd;
+  if(fullCmd == Command::SetBlock) argument = cmd;
   return make_pair(fullCmd, make_tuple(n, argument));
 }
 
@@ -197,7 +197,7 @@ int main(int argc, char *argv[]) {
       else if (newcmd == Command::Restart) {
         grid.init(LevelType::Level0, seed, false, scriptFile);
       } 
-      else if(newcmd = Command::SetBlock){
+      else if(newcmd == Command::SetBlock){
         string para = get<1>(fullCmd.second);
         BlockType type;
         if (para == "I") type = BlockType::IBlock;
@@ -210,6 +210,7 @@ int main(int argc, char *argv[]) {
         grid.setBlock(type);
       }
       else if (newcmd == Command::Rename) {
+      cout << "Running rename" << endl;
         //////////// New feature: Renaming commands //////////////
         string renamedCmd;
         string newCmdName;
