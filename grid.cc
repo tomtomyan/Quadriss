@@ -148,6 +148,7 @@ void Grid::addScore(bool isLine, LevelType level, int numLines) {
 }
 
 void Grid::left(int n) {
+  if (gameOver) return;
   checkHint();
   for (int i = 0; i < n; i++) {
     pair<int, int> newLeftBottom = make_pair(currentLeftBottom.first-1, currentLeftBottom.second);
@@ -165,6 +166,7 @@ void Grid::left(int n) {
 }
 
 void Grid::right(int n) {
+  if (gameOver) return;
   checkHint();
   for (int i = 0; i < n; i++) {
     pair<int, int> newLeftBottom = make_pair(currentLeftBottom.first+1, currentLeftBottom.second);
@@ -182,6 +184,7 @@ void Grid::right(int n) {
 }
 
 void Grid::down(int n) {
+  if (gameOver) return;
   checkHint();
   for (int i = 0; i < n; i++) {
     pair<int, int> newLeftBottom = make_pair(currentLeftBottom.first, currentLeftBottom.second+1);
@@ -199,6 +202,7 @@ void Grid::down(int n) {
 }
 
 void Grid::clockwise(int n) {
+  if (gameOver) return;
   checkHint();
   for (int i = 0; i < n; i++) {
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
@@ -215,6 +219,7 @@ void Grid::clockwise(int n) {
 }
 
 void Grid::counterClockwise(int n) {
+  if (gameOver) return;
   checkHint();
   for (int i = 0; i < n; i++) {
     vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
@@ -231,26 +236,35 @@ void Grid::counterClockwise(int n) {
 }
 
 void Grid::drop(int n) {
-  checkHint();
-  placeLowest();
-  checkRows();
-  shared_ptr<Block> o = theLevel->obstacle(currentLeftBottom);//change this
-  if (o) {
-    cout << "obstacle found" << endl;
-    currentBlock = o;
+  for (int i = 0; i < n; i++) {
+    if (gameOver) return;
+    checkHint();
     placeLowest();
     checkRows();
-  }
-  currentBlock = nextBlock;
-  nextBlock = theLevel->generateBlock();
+    shared_ptr<Block> o = theLevel->obstacle(currentLeftBottom);//change this
+    if (o) {
+      cout << "obstacle found" << endl;
+      currentBlock = o;
+      placeLowest();
+      checkRows();
+    }
+    currentBlock = nextBlock;
+    nextBlock = theLevel->generateBlock();
 
-  currentLeftBottom.first = 0;
-  currentLeftBottom.second = 3;
-  vector<pair<int, int>> current = currentBlock->getCoordinates(currentLeftBottom);
-  if (checkValid(current)) attach(current); //else game is over
+    currentLeftBottom.first = 0;
+    currentLeftBottom.second = 3;
+    vector<pair<int, int>> current = currentBlock->getCoordinates(currentLeftBottom);
+    if (checkValid(current)) {
+      attach(current);
+    } else {
+      gameOver = true;
+      cout << "GAME OVER" << endl;
+    }
+  }
 }
 
 void Grid::setLevel(LevelType level, int seed){
+  if (gameOver) return;
   checkHint();
   if (theLevel) seed = theLevel->getSeed();
   if (level == LevelType::Level0) {
@@ -268,6 +282,7 @@ void Grid::setLevel(LevelType level, int seed){
 }
 
 void Grid::levelUp(int n) {
+  if (gameOver) return;
   checkHint();
   LevelType level = LevelType::None;
   if (theLevel->getLevel() == LevelType::Level0) {
@@ -283,6 +298,7 @@ void Grid::levelUp(int n) {
 }
 
 void Grid::levelDown(int n) {
+  if (gameOver) return;
   checkHint();
   LevelType level = LevelType::None;
   if (theLevel->getLevel() == LevelType::Level0) {
@@ -298,12 +314,14 @@ void Grid::levelDown(int n) {
 }
 
 void Grid::random(bool isRandom, string fileName) {
+  if (gameOver) return;
   checkHint();
   theLevel->setIsRandom(isRandom);
   if(!isRandom) theLevel->setFileName(fileName);
 }
 
 void Grid::setBlock(BlockType type) {
+  if (gameOver) return;
   vector<pair<int, int>> old = currentBlock->getCoordinates(currentLeftBottom);
   detach(old);
   currentBlock = theLevel->generateBlock(type); 
@@ -339,9 +357,11 @@ void Grid::init(LevelType level, int seed, bool isRandom, string fileName) {
   vector<pair<int, int>> coords = currentBlock->getCoordinates(currentLeftBottom);
   attach(coords);
   nextBlock = theLevel->generateBlock();
+  gameOver = false;
 }
 
 void Grid::hint() {
+  if (gameOver) return;
   checkHint();
   int highestY = 0;
   vector<pair<int, int>> coords;
@@ -408,6 +428,7 @@ void Grid::detachObserver(shared_ptr<Observer<Info, State>> ob) {
 }
 
 std::ostream &operator<<(std::ostream &out, const Grid &g) {
+  if (g.gameOver) return out;
   out << "Level:      ";
   if (g.theLevel->getLevel() == LevelType::Level0) {
     out << 0;

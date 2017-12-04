@@ -33,7 +33,8 @@ class Grid {
 
   int score = 0;
   int highScore = 100;
-  
+  bool gameOver = false;
+
   void checkHint();
   void setLevel(LevelType level, int seed = 1);
   void checkRows();

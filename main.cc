@@ -30,23 +30,29 @@ int main(int argc, char *argv[]) {
   for (int i = 1; i < argc; i++) {
     if (argv[i] == std::string("-text")) {
       textOnly = true;
+      cout << "Text only mode" << endl;
     } else if (argv[i] == string("-seed")) {
       if (i+1 < argc) {
-	int n;
-	string s = argv[i+1];
-	istringstream iss{s};
-	if (iss >> n) seed = n;
-	++i;
+        int n;
+        string s = argv[i+1];
+        istringstream iss{s};
+        if (iss >> n) {
+          seed = n;
+          cout << "Seed set to " << seed << endl;
+        }
+        ++i;
       }
     } else if (argv[i] == string("-scriptfile")) {
       if (i+1 < argc) {
-	scriptFile = argv[i+1];
-	++i;
+        scriptFile = argv[i+1];
+        cout << "Script file set to " << scriptFile << endl;
+        ++i;
       }
     } else if (argv[i] == std::string("-startlevel")) {
       if (i+1 < argc) {
-	startLevel = argv[i+1];
-	++i;
+        startLevel = argv[i+1];
+        cout << "Start level set to " << startLevel << endl;
+        ++i;
       }
     }
   }
