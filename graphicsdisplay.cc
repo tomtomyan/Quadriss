@@ -105,11 +105,31 @@ void GraphicsDisplay::clearRows(){
 }
 
 void GraphicsDisplay::emptyQueue(){
- vector<pair<pair<int, int>, int>> finalQueue;
- int numQueue = queue.size();
+  vector<pair<pair<int, int>, int>> finalQueue;
+  int numQueue = queue.size();
   for(int i=0; i<numQueue; i++){
     pair<pair<int, int>, int> change = queue.at(i);
-    if(needShift && change.first.second <= maxRowShift) continue;
+    bool alreadyExists = false;
+    int finalSize = finalQueue.size();
+    for(int k=0; k<finalSize; k++){
+      if(change.first.first == finalQueue.at(k).first.first && change.first.second == finalQueue.at(k).first.second){
+        alreadyExists = true;
+        break;
+      }
+    }
+    if(alreadyExists) continue;
+    int finalIndex = i;
+    for(int j=i+1; j<numQueue; j++){
+      if(change.first.first == queue.at(j).first.first && change.first.second == queue.at(j).first.second){
+        finalIndex = j;
+      }
+    }
+    finalQueue.emplace_back(queue.at(finalIndex));
+  }
+  
+  int finalSize = finalQueue.size();
+  for(int i=0; i<finalSize; i++){
+    pair<pair<int, int>, int> change = finalQueue.at(i);
     xw.fillRectangle(gridXShift+(cellSize*change.first.first), gridYShift+(cellSize*change.first.second), cellSize, cellSize, change.second);
   }
   queue.clear();
@@ -125,17 +145,23 @@ void GraphicsDisplay::redraw(GameState gameState){
 
 //  print();
   // Draws text at top
-  xw.fillRectangle(0, 0, cellSize*gridWidth, cellSize*3, blankColour);
-  ostringstream levelStr;
-  levelStr << gameState.level;
-  xw.drawString(gridXShift, cellSize, levelStr.str());
-  ostringstream scoreStr;
-  scoreStr << "Score: " << setw(15)  << gameState.playScore;
-  xw.drawString(gridXShift, cellSize*2, scoreStr.str());
-  ostringstream hiScoreStr;
-  hiScoreStr << "High Score: " << setw(10)  << gameState.highScore;
-  xw.drawString(gridXShift, cellSize*3, hiScoreStr.str());
+  if(level!=gameState.level || playerScore!=gameState.playScore || highScore!=gameState.highScore){
+    level = gameState.level;
+    playerScore = gameState.playScore;
+    highScore = gameState.highScore;
+    xw.fillRectangle(0, 0, cellSize*gridWidth, cellSize*3, blankColour);
+    ostringstream levelStr;
+    levelStr << gameState.level;
+    xw.drawString(gridXShift, cellSize, levelStr.str());
+    ostringstream scoreStr;
+    scoreStr << "Score: " << setw(15)  << gameState.playScore;
+    xw.drawString(gridXShift, cellSize*2, scoreStr.str());
+    ostringstream hiScoreStr;
+    hiScoreStr << "High Score: " << setw(10)  << gameState.highScore;
+    xw.drawString(gridXShift, cellSize*3, hiScoreStr.str());
+  }
   // Draws grid
+  emptyQueue();
   if(needShift){
     for(int y=0; y<maxRowShift; y++){
       for(int x=0; x<gridWidth; x++){
@@ -143,26 +169,22 @@ void GraphicsDisplay::redraw(GameState gameState){
       }
     }
   }
-  int numQueue = queue.size();
-  for(int i=0; i<numQueue; i++){
-    pair<pair<int, int>, int> change = queue.at(i);
-    if(needShift && change.first.second <= maxRowShift) continue;
-    xw.fillRectangle(gridXShift+(cellSize*change.first.first), gridYShift+(cellSize*change.first.second), cellSize, cellSize, change.second);
-  }
-  queue.clear();
   needShift = false;
   maxRowShift = 0;
   // Draws next block
-  int numCells = gameState.nextBlockCoords.size();
-  int col = colourDefinition(gameState.nextBlock, DisplayFormat::Standard);
-  for(int x=0; x<4; x++){
-    for(int y=0; y<3; y++){
-      xw.fillRectangle(gridXShift+(cellSize*x), gridYShift+(cellSize*(gridHeight+y+1)), cellSize, cellSize, blankColour);
+  if(gameState.nextBlock != nextBlock){
+    nextBlock = gameState.nextBlock;
+    int numCells = gameState.nextBlockCoords.size();
+    int col = colourDefinition(gameState.nextBlock, DisplayFormat::Standard);
+    for(int x=0; x<4; x++){
+      for(int y=0; y<3; y++){
+        xw.fillRectangle(gridXShift+(cellSize*x), gridYShift+(cellSize*(gridHeight+y+1)), cellSize, cellSize, blankColour);
+      }
     }
-  }
-  for(int i=0; i<numCells; i++){
-    pair<int, int> cur = gameState.nextBlockCoords.at(i);
-    xw.fillRectangle(gridXShift+(cellSize*cur.first), gridYShift+(cellSize*(gridHeight+cur.second)), cellSize, cellSize,col);
+    for(int i=0; i<numCells; i++){
+      pair<int, int> cur = gameState.nextBlockCoords.at(i);
+      xw.fillRectangle(gridXShift+(cellSize*cur.first), gridYShift+(cellSize*(gridHeight+cur.second)), cellSize, cellSize,col);
+    }
   }
 //  drawGuideLines();
 }

@@ -35,6 +35,22 @@ pair<Command, tuple<int, string>> interpretCommand(vector<pair<Command, vector<s
   return make_pair(fullCmd, make_tuple(n, argument));
 }
 
+bool isValidName(vector<pair<Command, vector<string>>> &allCmds, string newCmd){
+  bool isValid = true;
+  int size = allCmds.size();
+  for (int i = 0; i < size; i++) {
+    pair<Command, vector<string>> cmdDef = allCmds.at(i);
+    int defSize = cmdDef.second.size();
+    for(int j=0; j < defSize; j++){
+      if (cmdDef.second.at(j).find(newCmd) == 0) {
+        isValid = false;
+        break;
+      }
+    }
+  }
+  return isValid;
+}
+
 
 int main(int argc, char *argv[]) {
   cin.exceptions(ios::eofbit|ios::failbit);
@@ -210,7 +226,6 @@ int main(int argc, char *argv[]) {
         grid.setBlock(type);
       }
       else if (newcmd == Command::Rename) {
-      cout << "Running rename" << endl;
         //////////// New feature: Renaming commands //////////////
         string renamedCmd;
         string newCmdName;
@@ -223,8 +238,8 @@ int main(int argc, char *argv[]) {
           cin >> newCmdName;
         }
         auto toBeRenamed = interpretCommand(allCmds,renamedCmd);
-        auto result = interpretCommand(allCmds,newCmdName);
-        if(toBeRenamed.first==Command::Invalid || result.first!=Command::Invalid){
+        bool result = isValidName(allCmds,newCmdName);
+        if(toBeRenamed.first==Command::Invalid || !result){
           cout << "Invalid input, please try again." << endl;
           continue;
         }

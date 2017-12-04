@@ -23,7 +23,12 @@ class GraphicsDisplay: public Observer<Info, State> {
   std::vector<int> rowsDeleted;
   bool needShift;
   int maxRowShift;
+
   bool gameOver = false;
+  int playerScore = 0;
+  int highScore = 0;
+  LevelType level;
+  BlockType nextBlock;
 
   int colourDefinition(BlockType type, DisplayFormat format) const;
   void createGrid();
