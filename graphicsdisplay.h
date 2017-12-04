@@ -22,8 +22,13 @@ class GraphicsDisplay: public Observer<Info, State> {
   std::vector<std::pair<std::pair<int, int>, int>> queue;
   bool needShift;
   int maxRowShift;
+  bool gameOver = false;
 
   int colourDefinition(BlockType type, DisplayFormat format) const;
+  void createGrid();
+  void drawGameOver();
+  void drawInitial();
+  void print();
 
  public:
   GraphicsDisplay(int gridSize, int winSize);

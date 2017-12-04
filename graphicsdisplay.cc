@@ -8,6 +8,15 @@ using namespace std;
 
 GraphicsDisplay::GraphicsDisplay(int winWidth, int winHeight):
  winWidth{winWidth}, winHeight{winHeight}, xw{winWidth, winHeight}, cellSize{(winHeight/24) < (winWidth/13) ? (winHeight/24) : (winWidth/13)} {
+  createGrid();
+
+  gridXShift = cellSize;
+  gridYShift = cellSize*4;
+  drawInitial();
+}
+
+void GraphicsDisplay::createGrid(){
+  grid.clear();
   for(int y=0; y<gridHeight; y++){
     vector<pair<bool, int>> row;
     for(int x=0; x<gridWidth; x++){
@@ -15,9 +24,9 @@ GraphicsDisplay::GraphicsDisplay(int winWidth, int winHeight):
     }
     grid.emplace_back(row);
   }
+}
 
-  gridXShift = cellSize;
-  gridYShift = cellSize*4;
+void GraphicsDisplay::drawInitial(){
   xw.fillRectangle(0, 0, winWidth, winHeight, blankColour); //fills background
   xw.fillRectangle(gridXShift-1, gridYShift-1, (cellSize*gridWidth)+2, 1); //draws border
   xw.fillRectangle(gridXShift-1, gridYShift+(cellSize*15)+1, (cellSize*gridWidth)+2, 1);
@@ -25,6 +34,11 @@ GraphicsDisplay::GraphicsDisplay(int winWidth, int winHeight):
   xw.fillRectangle(gridXShift+(cellSize*gridWidth)+1, gridYShift-1, 1, (cellSize*gridHeight)+2);
   needShift = true;
   maxRowShift = gridHeight;
+}
+
+void GraphicsDisplay::drawGameOver(){
+  xw.fillRectangle(0, 0, winWidth, winHeight, Xwindow::Black); //fills background
+  xw.drawString((winWidth/2)-20, winHeight/2, "Game Over", Xwindow::Red);
 }
 
 //  enum {White=0, Black, Red, Green, Blue, Cyan, Yellow, Magenta, Orange, Brown}; // Available colours.
@@ -60,6 +74,16 @@ int GraphicsDisplay::colourDefinition(BlockType type, DisplayFormat format) cons
 }
 
 void GraphicsDisplay::redraw(GameState gameState){
+  if(gameState.gameOver){
+    drawGameOver();
+    this->gameOver = true;
+    createGrid();
+    return;
+  }
+  else if(this->gameOver && !(gameState.gameOver)){
+    drawInitial();
+    this->gameOver = false;
+  }
   // Draws text at top
   xw.fillRectangle(0, 0, cellSize*gridWidth, (cellSize*2)+(cellSize/2), blankColour);
   ostringstream levelStr;
@@ -132,5 +156,18 @@ void GraphicsDisplay::notify(shared_ptr<Subject<Info, State>> whoNotified) {
     grid.at(coords.second).at(coords.first) = make_pair(false, colour);
     queue.emplace_back(make_pair(coords, colour));
   }
+}
+
+void GraphicsDisplay::print(){
+  cout << "-------------------" << endl;
+  for(int y=0; y<gridHeight; y++){
+    for(int x=0; x<gridWidth; x++){
+      int col = grid[y][x].second;
+      if(col == 0) cout  << " ";
+      else cout << col;
+    }
+    cout << endl;
+  }
+  cout << "-------------------" << endl;
 }
 

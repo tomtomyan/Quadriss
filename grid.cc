@@ -20,6 +20,7 @@ void Grid::checkHint() {
 
 GameState Grid::getGameState() const{
   GameState gs;
+  gs.gameOver = this->gameOver; 
   gs.level = theLevel->getLevel();
   gs.playScore = score;
   gs.highScore = highScore;

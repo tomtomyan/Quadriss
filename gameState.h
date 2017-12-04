@@ -5,6 +5,7 @@
 #include "info.h"
 
 struct GameState{
+ bool gameOver;
  LevelType level;
  int playScore;
  int highScore;

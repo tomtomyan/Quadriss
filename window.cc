@@ -83,7 +83,20 @@ void Xwindow::drawString(int x, int y, string msg, int colour) {
   XFlush(d);
 }
 
+void Xwindow::drawBigString(int x, int y, string msg, int colour) {
+  XSetForeground(d, gc, colours[colour]);
+  Font f = XLoadFont(d, "6x13");
+  XTextItem ti;
+  ti.chars = const_cast<char*>(msg.c_str());
+  ti.nchars = msg.length();
+  ti.delta = 0;
+  ti.font = f;
+  XDrawText(d, w, gc, x, y, &ti, 1);
+  XSetForeground(d, gc, colours[Black]);
+  XFlush(d);
+}
 
+/*
 void Xwindow::drawBigString(int x, int y, string msg, int colour) {
   XSetForeground(d, gc, colours[colour]);
   // Font f = XLoadFont(d, "-*-helvetica-bold-r-normal--*-240-*-*-*-*-*");
@@ -100,7 +113,7 @@ void Xwindow::drawBigString(int x, int y, string msg, int colour) {
   XSetForeground(d, gc, colours[Black]);
   XFlush(d);
 }
-
+*/
 void Xwindow::showAvailableFonts() {
   int count;
   char** fnts = XListFonts(d, "*", 10000, &count);
