@@ -290,14 +290,29 @@ void Grid::setLevel(LevelType level, int seed){
 void Grid::levelUp(int n) {
   if (gameOver) return;
   checkHint();
+  int l = 0;
   LevelType level = LevelType::None;
   if (theLevel->getLevel() == LevelType::Level0) {
-    level = LevelType::Level1;
+    l = 0;
   } else if (theLevel->getLevel() == LevelType::Level1) {
-    level = LevelType::Level2;
+    l = 1;
   } else if (theLevel->getLevel() == LevelType::Level2) {
-    level = LevelType::Level3;
+    l = 2;
   } else if (theLevel->getLevel() == LevelType::Level3) {
+    l = 3;
+  } else {
+    l = 4;
+  }
+  l += n;
+  if (l == 0) {
+    level = LevelType::Level0;
+  } else if (l == 1) {
+    level = LevelType::Level1;
+  } else if (l == 2) {
+    level = LevelType::Level2;
+  } else if (l == 3) {
+    level = LevelType::Level3;
+  } else { 
     level = LevelType::Level4;
   }
   setLevel(level);
@@ -306,15 +321,30 @@ void Grid::levelUp(int n) {
 void Grid::levelDown(int n) {
   if (gameOver) return;
   checkHint();
+  int l = 0;
   LevelType level = LevelType::None;
   if (theLevel->getLevel() == LevelType::Level0) {
-    level = LevelType::Level4;
+    l = 0;
   } else if (theLevel->getLevel() == LevelType::Level1) {
-    level = LevelType::Level0;
+    l = 1;
   } else if (theLevel->getLevel() == LevelType::Level2) {
-    level = LevelType::Level1;
+    l = 2;
   } else if (theLevel->getLevel() == LevelType::Level3) {
+    l = 3;
+  } else {
+    l = 4;
+  }
+  l -= n;
+  if (l == 4) {
+    level = LevelType::Level4;
+  } else if (l == 3) {
+    level = LevelType::Level3;
+  } else if (l == 2) {
     level = LevelType::Level2;
+  } else if (l == 1) {
+    level = LevelType::Level1;
+  } else { 
+    level = LevelType::Level0;
   }
   setLevel(level);
 }
