@@ -250,9 +250,9 @@ void Grid::drop(int n) {
   if (checkValid(current)) attach(current); //else game is over
 }
 
-void Grid::setLevel(LevelType level){
+void Grid::setLevel(LevelType level, int seed){
   checkHint();
-  int seed = theLevel->getSeed();
+  if (theLevel) seed = theLevel->getSeed();
   if (level == LevelType::Level0) {
     theLevel = make_unique<Level0>("sequence.txt"); 
   } else if (level == LevelType::Level1){
@@ -315,7 +315,7 @@ void Grid::setBlock(BlockType type) {
   attach(cur);
 }
 
-void Grid::init(LevelType level, bool isRandom, string fileName) {
+void Grid::init(LevelType level, int seed, bool isRandom, string fileName) {
   theGrid.clear();
   for (int y = 0; y < height; y++) {
     vector<shared_ptr<Cell>> row;
@@ -330,7 +330,7 @@ void Grid::init(LevelType level, bool isRandom, string fileName) {
     theGrid.emplace_back(row);
   }
   
-  setLevel(level);
+  setLevel(level, seed);
   theLevel->setIsRandom(isRandom);
   theLevel->setFileName(fileName);
   currentLeftBottom = make_pair(0,3);

@@ -237,7 +237,7 @@ int main(int argc, char *argv[]) {
             isSequence = true;
           }
       } else if (newcmd == "restart") {
-          grid.init(LevelType::Level0, false, scriptFile);
+          grid.init(LevelType::Level0, seed, false, scriptFile);
       } else if (newcmd == "hint") {
         grid.hint();
       }

@@ -28,12 +28,12 @@ string Level::getFileName() {
 }
 
 
-void setSeed(int seed) {
+void Level::setSeed(int seed) {
 	this->seed = seed;
 }
 
 
-int getSeed() {
+int Level::getSeed() {
 	return seed;
 }
 
