@@ -6,14 +6,12 @@
 using namespace std;
 
 Level0::Level0(int seed, string fileName):
-	Level{LevelType::Level0, false, false,seed, fileName}, fileStream{ifstream{fileName}} {}
+	Level{LevelType::Level0, false, false,seed, fileName}, fileStream{ifstream{fileName}} {
+  if(!fileStream) throw InvalidFile();
+}
 
 void Level0::setIsRandom(bool isRandom, string fileName) {}
-/*
-void Level0::setFileName(string fileName) {
-	this->fileName = fileName;
-}
-*/
+
 // Block constructor
 // Block(LevelType level, DisplayFormat format)
 shared_ptr<Block> Level0::generateBlock(BlockType type) {
@@ -21,6 +19,12 @@ shared_ptr<Block> Level0::generateBlock(BlockType type) {
     string input;
     if (fileStream >> input) {
       type = inputInterpreter(input);
+    }
+    if(type == BlockType::None){
+      cout << "End of file, restarting from the begining" << endl;
+      fileStream = ifstream{fileName};
+      if(fileStream >> input) type = inputInterpreter(input);
+      else throw InvalidFile{};
     }
   }
   return makeBlock(type, LevelType::Level0);

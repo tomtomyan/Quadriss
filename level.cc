@@ -66,9 +66,7 @@ BlockType Level::inputInterpreter(string input){
   else if (input == "S") type = BlockType::SBlock;
   else if (input == "Z") type = BlockType::ZBlock;
   else if (input == "T") type = BlockType::TBlock;
-  else {
-    throw InvalidShape{};
-  }
+  else type = BlockType::None;
   return type;
 }
 

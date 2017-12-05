@@ -5,6 +5,7 @@
 #include <tuple>
 #include "grid.h"
 #include "graphicsdisplay.h"
+#include "invalidfileexcept.h"
 using namespace std;
 
 enum Command {Invalid, Left, Right, Down, Clockwise, CounterClockwise, Drop, LevelUp, LevelDown, NoRandom, Random, Sequence, Restart, Hint, SetBlock, Rename};
@@ -146,7 +147,18 @@ int main(int argc, char *argv[]) {
     graphDis = make_shared<GraphicsDisplay>(380, 700);
     grid.attachObserver(graphDis);
   }
-  grid.init(startLevel, seed, scriptFile, twoPlayer);
+  bool created = false;
+  do{
+    try{
+      grid.init(startLevel, seed, scriptFile, twoPlayer);
+      created = true;
+      break;
+    }
+    catch(InvalidFile){
+      cout << "Invalid file name, please try re-entering" << endl;
+      cin >> scriptFile;
+    }
+  } while(!created);
   cout << grid;
   if (!textOnly) graphDis->redraw(grid.getGameState());
   
@@ -195,13 +207,31 @@ int main(int argc, char *argv[]) {
       else if (newcmd == Command::CounterClockwise) grid.counterClockwise(n);
       else if (newcmd == Command::Drop) grid.drop(n);
       else if (newcmd == Command::LevelUp) grid.levelUp(n);
-      else if (newcmd == Command::LevelDown) grid.levelDown(n, scriptFile);
+      else if (newcmd == Command::LevelDown){
+        grid.levelDown(n, scriptFile);
+        bool created = false;
+        do{
+          try{
+            grid.levelDown(n, scriptFile);
+            created = true;
+            break;
+          } catch(InvalidFile){
+            cout << "Invalid file name, please try re-entering" << endl;
+            cin >> scriptFile;
+          }
+        } while(!created);
+      }
       else if (newcmd == Command::Random) grid.random(true);
       else if (newcmd == Command::Hint) grid.hint();
       else if (newcmd == Command::NoRandom) {
         string file;
         if ((isSequence && fileStream >> file) || (cin >> file)) {
-          grid.random(false, file);
+          try{
+            grid.random(false, file);
+          }
+          catch(InvalidFile){
+            cout << "Invalid file name, please try again" << endl;
+          }
         }
       } 
       else if (newcmd == Command::Sequence) {
@@ -211,7 +241,17 @@ int main(int argc, char *argv[]) {
         }
       } 
       else if (newcmd == Command::Restart) {
-        grid.init(startLevel, seed, scriptFile, twoPlayer);
+        bool created = false;
+        do{
+          try{
+            grid.init(startLevel, seed, scriptFile, twoPlayer);
+            created = true;
+            break;
+          } catch(InvalidFile){
+            cout << "Invalid file name, please try re-entering" << endl;
+            cin >> scriptFile;
+          }
+        } while(!created);
       } 
       else if(newcmd == Command::SetBlock){
         string para = get<1>(fullCmd.second);

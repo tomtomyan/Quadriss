@@ -11,6 +11,7 @@ void Level4::setIsRandom(bool isRandom, string fileName) {
   if(fileName != "" ) this->fileName = fileName;
   if (isRandom == false) {
     fileStream = ifstream{this->fileName};
+    if(!fileStream) throw InvalidFile();
   }
 	this->isRandom = isRandom;
 }
@@ -21,8 +22,12 @@ shared_ptr<Block> Level4::generateBlock(BlockType type) {
     if (fileStream >> input) {
       type = inputInterpreter(input);
     }
+    if(type == BlockType::None){
+      cout << "End of file, switching to random generation" << endl;
+    }
   }
-  else if (type == BlockType::None) {
+ 
+  if (type == BlockType::None) {
     int randNum = rand() % 81 + 1;  // 1-81
     if ((1 <= randNum) && (randNum <= 18)) type = BlockType::SBlock;
     else if ((19 <= randNum) && (randNum <= 36)) type = BlockType::ZBlock;
