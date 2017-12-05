@@ -510,6 +510,7 @@ void Grid::detachObserver(shared_ptr<Observer<Info, State>> ob) {
 
 std::ostream &operator<<(std::ostream &out, const Grid &g) {
   if (g.gameOver) return out;
+  out <<  endl;
   out << "Level:      ";
   if (g.theLevel->getLevel() == LevelType::Level0) {
     out << 0;
