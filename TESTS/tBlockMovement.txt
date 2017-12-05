@@ -1,0 +1,1 @@
+T 4left 6right cloc 1down 0lef 2down 2counter 3lef 7clock drop

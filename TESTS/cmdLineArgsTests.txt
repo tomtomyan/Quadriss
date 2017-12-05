@@ -1,0 +1,10 @@
+1. no cmd line args
+2. -text
+3. -seed 2
+4. -seed 6
+5. -scriptfile [FILE]
+6. -startlevel 0
+7. -startlevel 1
+8. -startlevel 2
+9. -startlevel 3
+10. -startlevel 4

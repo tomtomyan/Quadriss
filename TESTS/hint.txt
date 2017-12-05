@@ -1,0 +1,13 @@
+hint
+drop
+hint
+5rig
+drop
+hint
+10ri
+drop
+hint
+drop
+hint
+cloc
+drop
