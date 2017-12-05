@@ -10,7 +10,6 @@ class Level0 : public Level {
 	public:
 	Level0(int seed, std::string fileName = "sequence.txt");
 	void setIsRandom(bool isRandom, std::string fileName = "") override;
-//	void setFileName(std::string) override;
 	std::shared_ptr<Block> generateBlock(BlockType type = BlockType::None) override;
 	std::shared_ptr<Block> obstacle(std::pair<int,int> &) override;
 };
